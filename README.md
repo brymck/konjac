@@ -1,6 +1,32 @@
 konjac
 ======
 
+A Ruby command-line utility for translating files using a YAML wordlist
+
+Usage
+-----
+
+Create a file in `~/.konjac/` called `dict.yml`. The file should have the
+following format:
+
+    languages:
+      en:
+        - english
+        - eng
+      ja:
+        - japanese
+        - jpn
+
+    ...
+
+    terms:
+      -
+        en: japanese
+        ja: nihongo
+      -
+        en: book
+        ja: hon
+
 Name
 ----
 

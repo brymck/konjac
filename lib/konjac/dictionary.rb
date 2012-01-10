@@ -7,6 +7,7 @@ module Konjac
         opts = { :force => false }.merge(opts)
         return @pairs if loaded? && !opts[:force]
 
+
         dict_dir = File.expand_path("~/.konjac/")
         dict_path = dict_dir + "/dict.yml"
 
@@ -16,9 +17,14 @@ module Konjac
         end
 
         @dictionary = ::YAML.load_file(dict_path)
-        @pairs = []
 
-        @dictionary.each do |term|
+        # Parse languages
+        from_lang = parse_language(from_lang)
+        to_lang = parse_language(to_lang)
+
+        # Build a list of search and replace pairs
+        @pairs = []
+        @dictionary["terms"].each do |term|
           if term.has_key?(from_lang) && term.has_key?(to_lang)
             @pairs << [term[from_lang], term[to_lang]]
           end
@@ -32,6 +38,20 @@ module Konjac
 
       def loaded?
         !!@loaded
+      end
+
+      def parse_language(lang)
+        if @dictionary["languages"].has_key?(lang)
+          return lang
+        else
+          @dictionary["languages"].each do |main, alternatives|
+            return main if alternatives.include?(lang)
+          end
+
+          # If no match is found, give an error message and exit
+          raise Exceptions::InvalidLanguageError.new("No match found for language \"#{lang}\"")
+          exit 1
+        end
       end
     end
   end
