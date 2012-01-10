@@ -49,7 +49,7 @@ module Konjac
         # Get a list of files to translate
         files = []
         while !ARGV.empty?
-          files += Dir.glob(ARGV.shift)
+          files += Dir.glob(File.expand_path(ARGV.shift))
         end
         files.uniq!
 
