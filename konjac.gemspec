@@ -5,11 +5,11 @@ require "konjac/version"
 Gem::Specification.new do |s|
   s.name        = "konjac"
   s.version     = Konjac::VERSION
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.authors     = ["Bryan McKelvey"]
+  s.email       = ["bryan.mckelvey@gmail.com"]
+  s.homepage    = "http://brymck.herokuapp.com/"
+  s.summary     = %q{A Ruby command-line utility for translating files using a YAML wordlist}
+  s.description = %q{A Ruby command-line utility for translating files using a YAML wordlist}
 
   s.rubyforge_project = "konjac"
 

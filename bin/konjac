@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby -Ku
+require "konjac"
+begin
+  Konjac::CLI.start
+rescue Interrupt => e
+  # Konjac.ui.error "\nQuitting..."
+  # Konjac.ui.debug e.backtrace.join("\n")
+  exit 1
+rescue SystemExit => e
+  exit e.status
+rescue Exception => e
+  raise e
+end
