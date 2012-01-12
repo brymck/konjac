@@ -237,7 +237,7 @@ module Konjac
 
       # Determine whether the specified language has spaces or not
       def has_spaces?(two_letter_code)
-        !LANGUAGES_WITHOUT_SPACES.include?(two_letter_code)
+        !LANGUAGES_WITHOUT_SPACES.include?(two_letter_code.to_sym)
       end
 
       private

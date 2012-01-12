@@ -15,6 +15,7 @@ module Konjac
 
         # Build a regex template for the from language
         from_template = build_regex_template(from_lang)
+        to_template   = build_replacement_template(from_lang, to_lang)
 
         # Get full path from name
         full_path = File.expand_path("~/.konjac/#{opts[:name]}.yml")
@@ -56,6 +57,7 @@ module Konjac
               unless from_term.is_a?(Regexp)
                 from_term = Regexp.new(from_template % from_term)
               end
+              to_term = to_template % to_term
 
               @pairs << [ from_term, to_term ]
             end
@@ -87,6 +89,16 @@ module Konjac
       def build_regex_template(lang)
         if Language.has_spaces?(lang)
           "\\b%s\\b"
+        else
+          "%s"
+        end
+      end
+
+      # Builds a replacement template for the to language, depending on whether
+      # the both from and to languages allow for whitespace
+      def build_replacement_template(from_lang, to_lang)
+        if !Language.has_spaces?(from_lang) && Language.has_spaces?(to_lang)
+          "%s "
         else
           "%s"
         end

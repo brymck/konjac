@@ -92,6 +92,10 @@ Extended Example
       ja:
         ja: "\\1\\2"
         en: !ruby/regexp '/([^\w])\s([^\w])/'
+    - # Delete extraneous spaces
+      en:
+        en: ""
+        ja: !ruby/regexp '/\s+$/'
 
 ~/.konjac/test_en.txt
 
