@@ -5,6 +5,8 @@ module Konjac
     class << self
       attr_accessor :from_lang, :to_lang, :path
 
+      BLANK = /^\s*$/
+
       def load(from_lang, to_lang, opts = {})
         # Set defaults for optional arguments
         opts = { :force => false, :name => "dict" }.merge(opts)
@@ -57,7 +59,8 @@ module Konjac
               unless from_term.is_a?(Regexp)
                 from_term = Regexp.new(from_template % from_term)
               end
-              to_term = to_template % to_term
+
+              to_term = to_template % to_term unless to_term =~ BLANK
 
               @pairs << [ from_term, to_term ]
             end

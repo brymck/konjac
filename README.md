@@ -88,14 +88,14 @@ Extended Example
     - # Spaces between non-ASCII characters
       en:
         en: " "
-        ja: !ruby/regexp '/\s{2,}/'
+        ja: !ruby/regexp /\s{2,}/
       ja:
-        ja: "\\1\\2"
-        en: !ruby/regexp '/([^\w])\s([^\w])/'
+        ja: \\1\\2
+        en: !ruby/regexp /([^\w])\s([^\w])/
     - # Delete extraneous spaces
       en:
         en: ""
-        ja: !ruby/regexp '/\s+$/'
+        ja: !ruby/regexp /\s(?=[.,:]|$)/
 
 ~/.konjac/test_en.txt
 

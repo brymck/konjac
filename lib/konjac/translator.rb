@@ -10,6 +10,7 @@ module Konjac
           content = File.read(source)
           pairs.each do |pair|
             search, replace = pair
+            puts "search = '%s', replace = '%s'" % [search, replace]
             content.gsub! search, replace
           end
 
