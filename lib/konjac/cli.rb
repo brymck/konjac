@@ -8,7 +8,7 @@ module Konjac
         case ARGV.shift
         when "translate"
           translate
-        when "extract"
+        when "extract", "export"
           Word.extract_docx_tags(ARGV)
         when "import"
           Word.import_docx_tags(ARGV)
