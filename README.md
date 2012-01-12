@@ -3,6 +3,11 @@ konjac
 
 A Ruby command-line utility for translating files using a YAML wordlist
 
+**Homepage**: http://brymck.herokuapp.com
+**Author**: Bryan McKelvey
+**Copyright**: (c) 2012 Bryan McKelvey
+**License**: MIT
+
 Installation
 ------------
 
