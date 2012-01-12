@@ -22,41 +22,41 @@ navigate in your command line to a directory of your choice, then run:
     cd konjac
     rake install
 
+Dictionary Format
+-----------------
+
+Store terms in `~/.konjac/dict.yml`.
+
+**Simple (two-way equivalent terms)** - English "I" is equivalent to Spanish
+"yo":
+
+    -
+      en: I
+      es: yo
+
+**Not as simple** - Japanese lacks a plural, therefore both "dog" and "dogs"
+translate as 犬:
+
+    -
+      en: dog
+      ja:
+        ja: 犬
+        en: dogs?  # i.e. the regular expression /dogs?/
+
 Usage
 -----
 
-Create a file in `~/.konjac/` called `dict.yml`. The file should have the
-following format:
-
-### Languages
-
-All languages for use within a particular dictionary file file must be described
-
-    languages:
-      en:
-        - english
-        - eng
-      ja:
-        - japanese
-        - jpn
-
-    ...
-
-    terms:
-      -
-        en: japanese
-        ja: nihongo
-      -
-        en: book
-        ja: hon
-
-You can then translate a file using the command line like so:
+Translate all text files in the current directory from Japanese into English:
 
     konjac translate *.txt from japanese to english
 
+Utilize a document's implied language (English) and translate into Japanese:
 
-Example
--------
+    konjac translate test_en.txt into japanese
+
+
+Extended Example
+----------------
 
 ~/.konjac/dict.yml:
 
