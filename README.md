@@ -3,6 +3,25 @@ konjac
 
 A Ruby command-line utility for translating files using a YAML wordlist
 
+Installation
+------------
+
+### Stable
+
+With [Ruby](http://www.ruby-lang.org/en/downloads/) installed, run the
+following in your terminal:
+
+    gem install konjac
+
+### Development
+
+With Ruby and [Git](http://help.github.com/set-up-git-redirect) installed,
+navigate in your command line to a directory of your choice, then run:
+
+    git clone git://github.com/brymck/konjac.git
+    cd konjac
+    rake install
+
 Usage
 -----
 

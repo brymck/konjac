@@ -2,9 +2,10 @@ require "konjac/version"
 autoload :FileUtils, "fileutils"
 
 module Konjac
+  # Set up autoload for all modules
   autoload :CLI,        "konjac/cli"
   autoload :Dictionary, "konjac/dictionary"
   autoload :Exceptions, "konjac/exceptions"
-  autoload :Manager,    "konjac/manager"
+  autoload :Languages,  "konjac/languages"
   autoload :Translator, "konjac/translator"
 end
