@@ -231,7 +231,7 @@ module Konjac
           end
 
           # Return nil if nothing found
-          raise Exception::InvalidLanguageError.new("Language not found: #{lang}")
+          raise InvalidLanguageError.new("Language not found: #{lang}")
         end
       end
 

@@ -3,13 +3,14 @@ require "yaml"
 module Konjac
   module Dictionary
     class << self
-      attr_accessor :from_lang, :to_lang, :path
+      attr_accessor :from_lang, :to_lang, :dictionaries, :pairs
 
       BLANK = /^\s*$/
 
-      def load(from_lang, to_lang, opts = {})
+      def load(from_lang, to_lang, dictionaries, opts = {})
         # Set defaults for optional arguments
-        opts = { :force => false, :name => "dict" }.merge(opts)
+        opts = { :force => false }.merge(opts)
+        dictionaries = ["dict"] if dictionaries.nil?
         
         # Allow both symbol and string arguments for languages
         from_lang = from_lang.to_s
@@ -20,16 +21,27 @@ module Konjac
         to_template   = build_replacement_template(from_lang, to_lang)
 
         # Get full path from name
-        full_path = File.expand_path("~/.konjac/#{opts[:name]}.yml")
         
-        return @pairs if loaded?(from_lang, to_lang, full_path) || opts[:force]
+        return @pairs if loaded?(from_lang, to_lang, dictionaries) || opts[:force]
 
         # Save variables to cache so we can avoid repetitive requests
-        cache_load from_lang, to_lang, opts
+        cache_load from_lang, to_lang, dictionaries
         
         # Make sure dictionary exists and load
-        verify_dictionary_exists full_path
-        @dictionary = ::YAML.load_file(full_path)
+        @dictionary = []
+        dictionaries.each do |dict|
+          if dict =~ /[\/.]/
+            sub_dictionaries = Dir.glob(File.expand_path(dict))
+          else
+            sub_dictionaries = Dir.glob(File.expand_path("~/.konjac/#{dict}.yml"))
+          end
+
+          sub_dictionaries.each do |sub_dict|
+            verify_dictionary_exists sub_dict
+            temp = ::YAML.load_file(sub_dict)
+            @dictionary += temp if temp.is_a?(Array)
+          end
+        end
 
         # Build a list of search and replace pairs
         @pairs = []
@@ -81,10 +93,10 @@ module Konjac
 
       # Tests whether the same from language, to language and dictionary path
       # have been loaded before
-      def loaded?(from_lang, to_lang, full_path)
-        (@from_lang == from_lang) &&
-        (@to_lang   == to_lang  ) &&
-        (@path      == full_path)
+      def loaded?(from_lang, to_lang, dictionaries)
+        (@from_lang    == from_lang) &&
+        (@to_lang      == to_lang  ) &&
+        (@dictionaries == dictionaries)
       end
 
       # Builds a regular expression template for the language depending on
@@ -123,10 +135,12 @@ module Konjac
         end
       end
 
-      def cache_load(from_lang, to_lang, opts)
-        @from_lang = from_lang
-        @to_lang   = to_lang
-        @path      = path
+      # Caches variables so we can determine later on whether to reload the
+      # dictionaries or not
+      def cache_load(from_lang, to_lang, dictionaries)
+        @from_lang    = from_lang
+        @to_lang      = to_lang
+        @dictionaries = dictionaries
       end
     end
   end

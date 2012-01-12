@@ -59,6 +59,9 @@ Utilize a document's implied language (English) and translate into Japanese:
 
     konjac translate test_en.txt into japanese
 
+Use multiple dictionaries:
+
+    konjac translate financial_report_en.txt into japanese using finance
 
 Extended Example
 ----------------
@@ -90,7 +93,7 @@ Extended Example
         en: " "
         ja: !ruby/regexp /\s{2,}/
       ja:
-        ja: \\1\\2
+        ja: "\\1\\2"
         en: !ruby/regexp /([^\w])\s([^\w])/
     - # Delete extraneous spaces
       en:

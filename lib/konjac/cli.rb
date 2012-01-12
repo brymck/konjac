@@ -12,7 +12,7 @@ module Konjac
         when "help"
           show_help
         else
-          raise ArgumentError.new("Valid commands are translate or add")
+          raise InvalidCommandError.new("Valid commands are translate or add")
         end
       end
 
@@ -24,6 +24,16 @@ module Konjac
       private
 
       def translate
+        # Get dictionaries
+        using_index = ARGV.index("using")
+        unless using_index.nil?
+          ARGV.delete_at using_index
+          dictionaries = []
+          while ARGV.length > using_index && !["from", "to", "into"].include?(ARGV[using_index])
+            dictionaries << ARGV.delete_at(using_index)
+          end
+        end
+        
         # Get from language
         from_index = ARGV.index("from")
         unless from_index.nil?
@@ -34,7 +44,7 @@ module Konjac
         # Get to language
         to_index = ARGV.index("to") || ARGV.index("into")
         if to_index.nil?
-          raise Exception::InvalidLanguageError.new("You must supply a to language")
+          raise InvalidLanguageError.new("You must supply a to language")
         else
           ARGV.delete_at to_index
           to_lang = ARGV.delete_at(to_index)
@@ -45,21 +55,21 @@ module Konjac
         while !ARGV.empty?
           files += Dir.glob(File.expand_path(ARGV.shift))
         end
-        raise Exception::FileNotFoundError.new("File not found") if files.empty?
+        raise FileNotFoundError.new("File not found") if files.empty?
         files.uniq!
 
         # Determine from language from first filename if not overridden
         if from_lang.nil?
           from_lang = Utils.extract_language_code_from_filename(files[0])
           if from_lang.nil?
-            raise Exception::InvalidLanguageError.new("You must supply a to language")
+            raise InvalidLanguageError.new("You must supply a to language")
           end
         end
 
         from_lang = Language.find(from_lang).to_s
         to_lang   = Language.find(to_lang).to_s
 
-        Translator.translate files, from_lang, to_lang
+        Translator.translate files, from_lang, to_lang, dictionaries
       end
     end
   end

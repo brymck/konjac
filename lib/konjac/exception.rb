@@ -1,6 +1,5 @@
 module Konjac
-  module Exception
-    class FileNotFoundError < StandardError; end
-    class InvalidLanguageError < StandardError; end
-  end
+  class FileNotFoundError < StandardError; end
+  class InvalidCommandError < StandardError; end
+  class InvalidLanguageError < StandardError; end
 end

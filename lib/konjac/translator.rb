@@ -2,15 +2,14 @@
 module Konjac
   module Translator
     class << self
-      def translate(files, from_lang, to_lang)
-        pairs = Dictionary.load(from_lang, to_lang)
+      def translate(files, from_lang, to_lang, dictionaries)
+        pairs = Dictionary.load(from_lang, to_lang, dictionaries)
         
         files.each do |source|
           # Read in file and replace matches in content
           content = File.read(source)
           pairs.each do |pair|
             search, replace = pair
-            puts "search = '%s', replace = '%s'" % [search, replace]
             content.gsub! search, replace
           end
 
