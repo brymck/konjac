@@ -9,16 +9,19 @@ module Konjac
         # Set defaults for optional arguments
         opts = { :force => false, :name => "dict" }.merge(opts)
         
-        # Parse languages
-        from_lang = parse_language(from_lang)
-        to_lang = parse_language(to_lang)
+        # Allow both symbol and string arguments for languages
+        from_lang = from_lang.to_s
+        to_lang   = to_lang.to_s
+
+        # Build a regex template for the from language
+        from_template = build_regex_template(from_lang)
 
         # Get full path from name
         full_path = File.expand_path("~/.konjac/#{opts[:name]}.yml")
         
-        return @pairs if loaded?(from_lang, to_lang, full_path)
+        return @pairs if loaded?(from_lang, to_lang, full_path) || opts[:force]
 
-        # Cache load
+        # Save variables to cache so we can avoid repetitive requests
         cache_load from_lang, to_lang, opts
         
         # Make sure dictionary exists and load
@@ -27,15 +30,43 @@ module Konjac
 
         # Build a list of search and replace pairs
         @pairs = []
-        @dictionary["terms"].each do |term|
-          if term.has_key?(from_lang) && term.has_key?(to_lang)
-            @pairs << [term[from_lang], term[to_lang]]
+        @dictionary.each do |term|
+          if term.has_key?(to_lang)
+            # Build to term depending on whether it's a hash for complex
+            # matches or a simple string
+            if term[to_lang].is_a?(Hash)
+              to_term = term[to_lang][to_lang]
+
+              if term[to_lang].has_key?(from_lang)
+                from_term = term[to_lang][from_lang]
+              end
+            else
+              to_term = term[to_lang]
+            end
+
+            # Build from term if it doesn't already exist
+            if term.has_key?(from_lang) && from_term.nil?
+              from_term = term[from_lang]
+            end
+
+            unless from_term.nil?
+              # Build a regular expression if it isn't already one
+              # Note that this will apply word boundary rules, so to avoid them
+              # create a regular expression in the dictionary file
+              unless from_term.is_a?(Regexp)
+                from_term = Regexp.new(from_template % from_term)
+              end
+
+              @pairs << [ from_term, to_term ]
+            end
           end
         end
 
         @pairs
       end
 
+      # Verifies whether the dictionary exists on the specified path, creating
+      # a blank file if it doesn't
       def verify_dictionary_exists(full_path)
         unless File.file?(full_path)
           FileUtils.mkpath File.dirname(full_path)
@@ -43,10 +74,22 @@ module Konjac
         end
       end
 
-      def loaded?(from_lang, to_lang, opts)
-        opts[:force] || (@from_lang == from_lang &&
-                         @to_lang   == to_lang   &&
-                         @path      == opts[:path])
+      # Tests whether the same from language, to language and dictionary path
+      # have been loaded before
+      def loaded?(from_lang, to_lang, full_path)
+        (@from_lang == from_lang) &&
+        (@to_lang   == to_lang  ) &&
+        (@path      == full_path)
+      end
+
+      # Builds a regular expression template for the language depending on
+      # whether that language has word boundaries
+      def build_regex_template(lang)
+        if Language.has_spaces?(lang)
+          "\\b%s\\b"
+        else
+          "%s"
+        end
       end
 
       private

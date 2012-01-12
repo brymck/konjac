@@ -19,7 +19,10 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # specify any dependencies here; for example:
-  s.add_development_dependency "autotest"
+  s.add_development_dependency "bundler"
   s.add_development_dependency "rspec"
-  s.add_runtime_dependency "trollop"
+  s.add_development_dependency "sdoc"
+  s.add_development_dependency "autotest"
+  s.add_development_dependency "autotest-fsevent"
+  s.add_development_dependency "autotest-growl"
 end

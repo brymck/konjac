@@ -28,6 +28,10 @@ Usage
 Create a file in `~/.konjac/` called `dict.yml`. The file should have the
 following format:
 
+### Languages
+
+All languages for use within a particular dictionary file file must be described
+
     languages:
       en:
         - english
@@ -49,6 +53,55 @@ following format:
 You can then translate a file using the command line like so:
 
     konjac translate *.txt from japanese to english
+
+
+Example
+-------
+
+~/.konjac/dict.yml:
+
+    -
+      en: I
+      ja: 僕
+    -
+      en: like
+      ja: 好き
+    -
+      en:
+        en: dog
+        ja: 犬
+      ja:
+        ja: 犬
+        en: dogs?
+    - # Periods
+      en:
+        en: ". "
+        ja: 。
+      ja:
+        ja: 。
+        en: !ruby/regexp '/\.\s?/'
+    - # Spaces between non-ASCII characters
+      en:
+        en: " "
+        ja: !ruby/regexp '/\s{2,}/'
+      ja:
+        ja: "\\1\\2"
+        en: !ruby/regexp '/([^a-z])\s([^a-z])/'
+
+~/.konjac/test_en.txt
+
+    I like dogs.
+
+Run
+
+    konjac translate ~/.konjac/test_en.txt into japanese
+
+~/.konjac/test_ja.txt (result):
+
+    僕好き犬。
+
+Now, obviously that does require some fiddling to make it more grammatical, but
+it's a start (=> `僕は犬が好きだ。`)
 
 Name
 ----

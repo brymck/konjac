@@ -1,5 +1,5 @@
 module Konjac
-  module Languages
+  module Language
     class << self
       LANGUAGES_WITHOUT_SPACES = [:ar, :he, :ja, :zh]
       LIST = {
@@ -231,13 +231,13 @@ module Konjac
           end
 
           # Return nil if nothing found
-          return nil
+          raise Exception::InvalidLanguageError.new("Language not found: #{lang}")
         end
       end
 
       # Determine whether the specified language has spaces or not
       def has_spaces?(two_letter_code)
-        LANGUAGES_WITHOUT_SPACES.include?(two_letter_code)
+        !LANGUAGES_WITHOUT_SPACES.include?(two_letter_code)
       end
 
       private
