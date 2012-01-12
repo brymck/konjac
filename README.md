@@ -84,14 +84,14 @@ Extended Example
         ja: 。
       ja:
         ja: 。
-        en: !ruby/regexp '/\.\s?/'
+        en: !ruby/regexp '/\.(?:\s|$)/'
     - # Spaces between non-ASCII characters
       en:
         en: " "
         ja: !ruby/regexp '/\s{2,}/'
       ja:
         ja: "\\1\\2"
-        en: !ruby/regexp '/([^a-z])\s([^a-z])/'
+        en: !ruby/regexp '/([^\w])\s([^\w])/'
 
 ~/.konjac/test_en.txt
 
