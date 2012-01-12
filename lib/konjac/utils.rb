@@ -11,7 +11,7 @@ module Konjac
           match[1]
         end
       end
-      
+
       # Build converted file name by appending "_converted" to the file name
       def build_converted_file_name(source, from_lang, to_lang)
         # Get components of filename
