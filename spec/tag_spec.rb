@@ -22,14 +22,14 @@ describe Tag do
     @manager = TagManager.new(@tags_file.path)
   end
 
-  it "should accurately read a tag file" do
+  it "should accurately read a tag" do
     @manager.all.should_not == nil
     @manager[0].index.should == 1
     @manager[0].original.should == "犬"
     @manager[0].translated.should == "dog"
   end
 
-  it "should succeed reading multiple lines" do
+  it "should succeed reading multiple tags" do
     @manager[1].index.should == 2
     @manager[1].original.should == "何ですか。"
     @manager[1].translated.should == "What is it?"
@@ -39,6 +39,11 @@ describe Tag do
     @manager[2].index.should == 3
     @manager[2].original.should == "空白"
     @manager[2].translated.should == nil
+  end
+
+  it "should know whether a tag has been translated" do
+    @manager[0].translated?.should == true
+    @manager[2].translated?.should == false
   end
 
   it "should skip over blank indexes" do

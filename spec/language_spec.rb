@@ -11,6 +11,10 @@ describe Language do
     Language.find(:jpn).should == :ja
   end
 
+  it "should fail to find a made-up language" do
+    lambda { Language.find(:black_speech) }.should raise_error InvalidLanguageError
+  end
+
   it "should return equal results for both strings and symbols" do
     Language.find(:english).should == Language.find("english")
   end
