@@ -49,8 +49,8 @@ describe CLI do
       end
     end
 
-    it "should return the name of the file to translate" do
-      CLI.start.should == [@english.path]
+    it "should return the name of the sub_command" do
+      CLI.start.should == :translate
     end
   end
 end

@@ -1,28 +1,43 @@
 module Konjac
   module CLI
-    class << self
-      def start
-        show_help if ARGV.empty?
+    autoload :SubCommand,        "konjac/cli/sub_command"
+    autoload :SubCommandManager, "konjac/cli/sub_command_manager"
 
-        # Subcommand
-        case ARGV.shift
-        when "translate"
-          translate
-        when "extract", "export"
+    class << self
+      def init_sub_commands
+        @valid_commands = SubCommandManager.new
+        @valid_commands.add :extract, [:export, :e, :x], "Extract text from a DOCX file" do
           Word.extract_docx_tags(ARGV)
-        when "import"
-          Word.import_docx_tags(ARGV)
-        when "add"
-        when "help"
+        end
+        @valid_commands.add :help, [:h, :"-h", :"?"], "Show help" do
           show_help
-        else
-          raise InvalidCommandError.new("Valid commands are translate or add")
+        end
+        @valid_commands.add :import, [:i, :m], "Import text back into a DOCX file" do
+          Word.import_docx_tags(ARGV)
+        end
+        @valid_commands.add :translate, [:t], "Translate a file" do
+          translate
         end
       end
 
+      def start
+        init_sub_commands
+        show_help if ARGV.empty?
+
+        # Subcommand
+        sub_command = ARGV.shift
+        result = @valid_commands.execute(sub_command)
+
+        if result.nil?
+          show_help
+          raise InvalidCommandError.new("Invalid subcommand: #{sub_command}")
+        end
+
+        result
+      end
+
       def show_help
-        puts "Help"
-        exit 0
+        puts @valid_commands.to_s
       end
 
       private
