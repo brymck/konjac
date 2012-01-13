@@ -9,7 +9,7 @@ module Konjac
         @valid_commands.add :extract, [:export, :e, :x], "Extract text from a DOCX file" do
           Word.extract_docx_tags(ARGV)
         end
-        @valid_commands.add :help, [:h, :"-h", :"?"], "Show help" do
+        @valid_commands.add :help, [:h, :"?"], "Show help" do
           show_help
         end
         @valid_commands.add :import, [:i, :m], "Import text back into a DOCX file" do
@@ -29,8 +29,7 @@ module Konjac
         result = @valid_commands.execute(sub_command)
 
         if result.nil?
-          show_help
-          raise InvalidCommandError.new("Invalid subcommand: #{sub_command}")
+          raise InvalidCommandError.new("#{@valid_commands.to_s}\n\nInvalid subcommand: #{sub_command}")
         end
 
         result
