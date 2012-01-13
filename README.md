@@ -63,7 +63,8 @@ Use multiple dictionaries:
 
     konjac translate financial_report_en.txt into japanese using finance
 
-Extract text from a DOCX document (creates a plain-text `test.tags` file):
+Extract text from a DOCX document (creates a plain-text `test.konjac` file from
+`test.docx`):
 
     konjac extract test.docx
 
