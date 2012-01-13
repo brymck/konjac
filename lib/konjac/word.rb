@@ -1,6 +1,8 @@
 module Konjac
   module Word
     class << self
+      STARTS_WITH_CLOSE_TAG = /^\>/
+
       # Extracts the text content from a Microsoft Word 2003+ Document
       def import_docx_tags(files)
         files.each do |file|
@@ -11,7 +13,7 @@ module Konjac
             basename  = File.basename(sub_file, ".*")
             new_path  = "#{dirname}/#{basename}_imported.docx"
             xml_path  = "#{dirname}/#{basename}.xml"
-            tags_path = "#{dirname}/#{basename}.tags"
+            tags_path = "#{dirname}/#{basename}.konjac"
             out_path  = "#{dirname}/word/document.xml"
 
             # Open the original XML file and the updated tags
@@ -20,6 +22,10 @@ module Konjac
 
             # Overwrite each <w:t> tag's content with the new tag
             writer.xpath("//w:t").each do |node|
+              content = tags.shift
+
+              content = tags.shift while content =~ STARTS_WITH_CLOSE_TAG
+
               node.content = tags.shift.tr("\n", "")
             end
 
@@ -50,7 +56,7 @@ module Konjac
             basename   = File.basename(sub_file, ".*")
             xml_path   = "#{dirname}/#{basename}_orig.xml"
             clean_path = "#{dirname}/#{basename}.xml"
-            tags_path  = "#{dirname}/#{basename}.tags"
+            tags_path  = "#{dirname}/#{basename}.konjac"
 
             # Unzip the DOCX's word/document.xml file and pipe the output into
             # an XML with the same base name as the DOCX
@@ -79,8 +85,12 @@ module Konjac
                 prev = node
               end
 
+              # Write the tags file
+              index = 0
               cleaner.xpath("//w:t").each do |node|
-                tags_file.puts node.content
+                index += 1
+                tags_file.puts "[[KJ-#{index}]]"
+                tags_file.puts "> #{node.content}"
               end
             end
 

@@ -8,6 +8,7 @@ module Konjac
   autoload :CLI,        "konjac/cli"
   autoload :Dictionary, "konjac/dictionary"
   autoload :Language,   "konjac/language"
+  autoload :Tag,        "konjac/tag"
   autoload :Translator, "konjac/translator"
   autoload :Utils,      "konjac/utils"
   autoload :Word,       "konjac/word"
