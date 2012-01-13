@@ -16,13 +16,12 @@ module Konjac
         from_lang = from_lang.to_s
         to_lang   = to_lang.to_s
 
+        # Ignore everything if we've been here before
+        return @pairs if loaded?(from_lang, to_lang, dictionaries) || opts[:force]
+        
         # Build a regex template for the from language
         from_template = build_regex_template(from_lang)
         to_template   = build_replacement_template(from_lang, to_lang)
-
-        # Get full path from name
-        
-        return @pairs if loaded?(from_lang, to_lang, dictionaries) || opts[:force]
 
         # Save variables to cache so we can avoid repetitive requests
         cache_load from_lang, to_lang, dictionaries
@@ -46,40 +45,51 @@ module Konjac
         # Build a list of search and replace pairs
         @pairs = []
         @dictionary.each do |term|
-          if term.has_key?(to_lang)
-            # Build to term depending on whether it's a hash for complex
-            # matches or a simple string
-            if term[to_lang].is_a?(Hash)
-              to_term = term[to_lang][to_lang]
-
-              if term[to_lang].has_key?(from_lang)
-                from_term = term[to_lang][from_lang]
-              end
-            else
-              to_term = term[to_lang]
-            end
-
-            # Build from term if it doesn't already exist
-            if term.has_key?(from_lang) && from_term.nil?
-              from_term = term[from_lang]
-            end
-
-            unless from_term.nil?
-              # Build a regular expression if it isn't already one
-              # Note that this will apply word boundary rules, so to avoid them
-              # create a regular expression in the dictionary file
-              unless from_term.is_a?(Regexp)
-                from_term = Regexp.new(from_template % from_term)
-              end
-
-              to_term = to_template % to_term unless to_term =~ BLANK
-
-              @pairs << [ from_term, to_term ]
-            end
-          end
+          pair = extract_pair_from_term(term, from_lang, to_lang, from_template, to_template)
+          @pairs << pair unless pair.nil?
         end
 
         @pairs
+      end
+
+      def extract_pair_from_term(term, from_lang, to_lang, from_template, to_template)
+        if term.has_key?(to_lang)
+          # Build to term depending on whether it's a hash for complex
+          # matches or a simple string
+          if term[to_lang].is_a?(Hash)
+            to_term = term[to_lang][to_lang]
+
+            if term[to_lang].has_key?(from_lang)
+              from_term = term[to_lang][from_lang]
+            end
+          else
+            to_term = term[to_lang]
+          end
+
+          # Build from term if it doesn't already exist
+          if term.has_key?(from_lang) && from_term.nil?
+            from_term = term[from_lang]
+          end
+
+          unless from_term.nil?
+            # Build a regular expression if it isn't already one.
+            # Note that this will apply word boundary rules, so to avoid them
+            # create a regular expression in the dictionary file.
+            # Matching is case-insensitive unless the expression contains a
+            # capital letter.
+            unless from_term.is_a?(Regexp)
+              from_term = Regexp.new(from_template % from_term,
+                                     ("i" unless from_term =~ /[A-Z]/))
+            end
+
+            to_term = to_template % to_term unless to_term =~ BLANK
+
+            return [ from_term, to_term ]
+          end
+        end
+
+        # Return nil if no term could be constructed
+        return nil
       end
 
       # Verifies whether the dictionary exists on the specified path, creating
