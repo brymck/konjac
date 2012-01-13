@@ -66,11 +66,12 @@ Use multiple dictionaries:
 Extract text from a DOCX document (creates a plain-text `test.konjac` file from
 `test.docx`):
 
-    konjac extract test.docx
+    konjac extract test
 
-Import tags file back into DOCX document:
+Import tags file back into DOCX document (file created is named
+`test_imported.docx`):
 
-    konjac import test.docx
+    konjac import test
 
 Extended Example
 ----------------
