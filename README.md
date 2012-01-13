@@ -110,7 +110,7 @@ Extended Example
         en: ""
         ja: !ruby/regexp /\s(?=[.,:]|$)/
 
-~/.konjac/test_en.txt
+~/.konjac/test_en.txt:
 
     I like dogs.
 
