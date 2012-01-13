@@ -9,6 +9,7 @@ module Konjac
   autoload :Dictionary, "konjac/dictionary"
   autoload :Language,   "konjac/language"
   autoload :Tag,        "konjac/tag"
+  autoload :TagManager, "konjac/tag_manager"
   autoload :Translator, "konjac/translator"
   autoload :Utils,      "konjac/utils"
   autoload :Word,       "konjac/word"

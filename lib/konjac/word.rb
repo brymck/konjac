@@ -1,8 +1,8 @@
+# This really needs cleanup
+
 module Konjac
   module Word
     class << self
-      STARTS_WITH_CLOSE_TAG = /^\>/
-
       # Extracts the text content from a Microsoft Word 2003+ Document
       def import_docx_tags(files)
         files.each do |file|
@@ -18,19 +18,20 @@ module Konjac
 
             # Open the original XML file and the updated tags
             writer = Nokogiri::XML(File.read(xml_path))
-            tags   = File.readlines(tags_path)
+            nodes  = writer.xpath("//w:t")
+            tags   = TagManager.new(tags_path)
 
             # Overwrite each <w:t> tag's content with the new tag
-            writer.xpath("//w:t").each do |node|
-              content = tags.shift
-
-              content = tags.shift while content =~ STARTS_WITH_CLOSE_TAG
-
-              node.content = tags.shift.tr("\n", "")
+            tags.all.each do |tag|
+              if tag.translated?
+                nodes[tag.index].content = tag.translated
+              end
             end
 
             # Create a directory for word/document.xml if necessary
-            FileUtils.mkdir "#{dirname}/word" unless File.directory?("#{dirname}/word")
+            unless File.directory?("#{dirname}/word")
+              FileUtils.mkdir "#{dirname}/word"
+            end
 
             # Write the modified XML to a file
             File.open(out_path, "w") do |file|
@@ -88,12 +89,13 @@ module Konjac
               # Write the tags file
               index = 0
               cleaner.xpath("//w:t").each do |node|
+                tags_file.puts "[[KJ-%i]]%s" % [index, additional_info(node)]
+                tags_file.puts "> %s" % node.content
                 index += 1
-                tags_file.puts "[[KJ-#{index}]]"
-                tags_file.puts "> #{node.content}"
               end
             end
 
+            # Write the cleaned-up XML to a file for inspection
             File.open(clean_path, "w") do |xml|
               xml.puts cleaner.to_xml
             end
@@ -157,6 +159,18 @@ module Konjac
       def clean_hash(hash)
         hash.delete :t
         hash[:rPr][:rFonts][:attributes].delete :hint
+      end
+
+      # Get additional information on the node for context in tags file
+      def additional_info(node)
+        info = []
+        info << "hyperlink" if node.parent.parent.name == "hyperlink"
+
+        if info.empty?
+          ""
+        else
+          "  #=> #{info.join(", ")}"
+        end
       end
     end
   end
