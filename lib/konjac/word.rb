@@ -11,6 +11,7 @@ module Konjac
             # Build the list of paths we need to work with
             dirname   = File.dirname(sub_file)
             basename  = File.basename(sub_file, ".*")
+            orig_docx = "#{dirname}/#{basename}.docx"
             new_path  = "#{dirname}/#{basename}_imported.docx"
             xml_path  = "#{dirname}/#{basename}.xml"
             tags_path = "#{dirname}/#{basename}.konjac"
@@ -39,7 +40,7 @@ module Konjac
             end
 
             # Copy the original file
-            FileUtils.cp sub_file, new_path
+            FileUtils.cp orig_docx, new_path
 
             # Add the new document XML to the copied file
             system "cd #{dirname} && zip -q #{new_path} word/document.xml"
@@ -55,13 +56,14 @@ module Konjac
             # Build a list of all the paths we're working with
             dirname    = File.dirname(sub_file)
             basename   = File.basename(sub_file, ".*")
+            orig_docx  = "#{dirname}/#{basename}.docx"
             xml_path   = "#{dirname}/#{basename}_orig.xml"
             clean_path = "#{dirname}/#{basename}.xml"
             tags_path  = "#{dirname}/#{basename}.konjac"
 
             # Unzip the DOCX's word/document.xml file and pipe the output into
             # an XML with the same base name as the DOCX
-            system "unzip -p #{sub_file} word/document.xml > #{xml_path}"
+            system "unzip -p #{orig_docx} word/document.xml > #{xml_path}"
 
             # Read in the XML file and extract the content from each <w:t> tag
             cleaner = Nokogiri::XML(File.read(xml_path))
