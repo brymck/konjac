@@ -24,6 +24,21 @@ module Konjac
         
         "#{dirname}/#{basename}_#{to_lang}#{extname}"
       end
+      
+      # Forces a file or list of files to have a specific extension
+      def force_extension(files, ext)
+        result = []
+
+        files = [files] unless files.is_a?(Array)
+
+        files.each do |file|
+          file.sub! /\.[^\\\/]*$/, ""
+          file += "." + ext.tr(".", "")
+          result += Dir.glob(File.expand_path(file))
+        end
+
+        result
+      end
     end
   end
 end

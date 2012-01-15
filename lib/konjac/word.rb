@@ -5,103 +5,107 @@ module Konjac
     class << self
       # Extracts the text content from a Microsoft Word 2003+ Document
       def import_docx_tags(files)
-        files.each do |file|
-          sub_files = Dir.glob(File.expand_path(file))
-          sub_files.each do |sub_file|
-            # Build the list of paths we need to work with
-            dirname   = File.dirname(sub_file)
-            basename  = File.basename(sub_file, ".*")
-            orig_docx = "#{dirname}/#{basename}.docx"
-            new_path  = "#{dirname}/#{basename}_imported.docx"
-            xml_path  = "#{dirname}/#{basename}.xml"
-            tags_path = "#{dirname}/#{basename}.konjac"
-            out_path  = "#{dirname}/word/document.xml"
+        sub_files = Utils.force_extension(files, ".docx")
+        sub_files.each do |sub_file|
+          # Build the list of paths we need to work with
+          dirname   = File.dirname(sub_file)
+          basename  = File.basename(sub_file, ".*")
+          orig_docx = "#{dirname}/#{basename}.docx"
+          new_path  = "#{dirname}/#{basename}_imported.docx"
+          xml_path  = "#{dirname}/#{basename}.xml"
+          tags_path = "#{dirname}/#{basename}.konjac"
+          out_path  = "#{dirname}/word/document.xml"
 
-            # Open the original XML file and the updated tags
-            writer = Nokogiri::XML(File.read(xml_path))
-            nodes  = writer.xpath("//w:t")
-            tags   = TagManager.new(tags_path)
+          # Open the original XML file and the updated tags
+          writer = Nokogiri::XML(File.read(xml_path))
+          nodes  = writer.xpath("//w:t")
+          tags   = TagManager.new(tags_path)
 
-            # Overwrite each <w:t> tag's content with the new tag
-            tags.all.each do |tag|
-              if tag.translated?
-                nodes[tag.index].content = tag.translated
-              end
+          # Overwrite each <w:t> tag's content with the new tag
+          tags.all.each do |tag|
+            if tag.translated?
+              nodes[tag.index].content = tag.translated
             end
-
-            # Create a directory for word/document.xml if necessary
-            unless File.directory?("#{dirname}/word")
-              FileUtils.mkdir "#{dirname}/word"
-            end
-
-            # Write the modified XML to a file
-            File.open(out_path, "w") do |file|
-              file.write writer.to_xml.gsub(/\n\s*/, "").sub(/\?></, "?>\n<")
-            end
-
-            # Copy the original file
-            FileUtils.cp orig_docx, new_path
-
-            # Add the new document XML to the copied file
-            system "cd #{dirname} && zip -q #{new_path} word/document.xml"
           end
+
+          # Create a directory for word/document.xml if necessary
+          unless File.directory?("#{dirname}/word")
+            FileUtils.mkdir "#{dirname}/word"
+          end
+
+          # Write the modified XML to a file
+          File.open(out_path, "w") do |file|
+            file.write writer.to_xml.gsub(/\n\s*/, "").sub(/\?></, "?>\n<")
+          end
+
+          # Copy the original file
+          FileUtils.cp orig_docx, new_path
+
+          # Add the new document XML to the copied file
+          system "cd #{dirname} && zip -q #{new_path} word/document.xml"
         end
       end
 
       # Extracts the text content from a Microsoft Word 2003+ Document
       def extract_docx_tags(files)
-        files.each do |file|
-          sub_files = Dir.glob(File.expand_path(file))
-          sub_files.each do |sub_file|
-            # Build a list of all the paths we're working with
-            dirname    = File.dirname(sub_file)
-            basename   = File.basename(sub_file, ".*")
-            orig_docx  = "#{dirname}/#{basename}.docx"
-            xml_path   = "#{dirname}/#{basename}_orig.xml"
-            clean_path = "#{dirname}/#{basename}.xml"
-            tags_path  = "#{dirname}/#{basename}.konjac"
+        sub_files = Utils.force_extension(files, ".docx")
+        sub_files.each do |sub_file|
+          # Build a list of all the paths we're working with
+          dirname    = File.dirname(sub_file)
+          basename   = File.basename(sub_file, ".*")
+          orig_docx  = "#{dirname}/#{basename}.docx"
+          xml_path   = "#{dirname}/#{basename}_orig.xml"
+          clean_path = "#{dirname}/#{basename}.xml"
+          tags_path  = "#{dirname}/#{basename}.konjac"
 
-            # Unzip the DOCX's word/document.xml file and pipe the output into
-            # an XML with the same base name as the DOCX
-            system "unzip -p #{orig_docx} word/document.xml > #{xml_path}"
+          # Unzip the DOCX's word/document.xml file and pipe the output into
+          # an XML with the same base name as the DOCX
+          system "unzip -p #{orig_docx} word/document.xml > #{xml_path}"
 
-            # Read in the XML file and extract the content from each <w:t> tag
-            cleaner = Nokogiri::XML(File.read(xml_path))
-            File.open(tags_path, "w") do |tags_file|
-              # Remove all grammar and spellcheck tags
-              cleaner.xpath("//w:proofErr").remove
+          # Read in the XML file and extract the content from each <w:t> tag
+          cleaner = Nokogiri::XML(File.read(xml_path))
+          File.open(tags_path, "w") do |tags_file|
+            # Remove all grammar and spellcheck tags
+            cleaner.xpath("//w:proofErr").remove
 
-              nodes = cleaner.xpath("//w:r")
-              prev = nil
-              nodes.each do |node|
-                unless prev.nil?
-                  if (prev.next_sibling == node) && compare_nodes(prev, node)
-                    begin
-                      node.at_xpath("w:t").content = prev.at_xpath("w:t").content +
-                        node.at_xpath("w:t").content
-                      prev.remove
-                    rescue
-                    end
+            nodes = cleaner.xpath("//w:r")
+            prev = nil
+            nodes.each do |node|
+              unless prev.nil?
+                if (prev.next_sibling == node) && compare_nodes(prev, node)
+                  begin
+                    node.at_xpath("w:t").content = prev.at_xpath("w:t").content +
+                      node.at_xpath("w:t").content
+                    prev.remove
+                  rescue
                   end
                 end
-                
-                prev = node
               end
-
-              # Write the tags file
-              index = 0
-              cleaner.xpath("//w:t").each do |node|
-                tags_file.puts "[[KJ-%i]]%s" % [index, additional_info(node)]
-                tags_file.puts "> %s" % node.content
-                index += 1
-              end
+              
+              prev = node
             end
 
-            # Write the cleaned-up XML to a file for inspection
-            File.open(clean_path, "w") do |xml|
-              xml.puts cleaner.to_xml
+            # Write the tags file
+            index = 0
+            cleaner.xpath("//w:t").each do |node|
+              tags_file.puts "[[KJ-%i]]%s" % [index, additional_info(node)]
+              tags_file.puts "> %s" % node.content
+              index += 1
             end
           end
+
+          # Write the cleaned-up XML to a file for inspection
+          File.open(clean_path, "w") do |xml|
+            xml.puts cleaner.to_xml
+          end
+        end
+      end
+
+      # Opens the .konjac tag files for the specified DOCX files
+      def edit_docx_tags(files)
+        sub_files = Utils.force_extension(files, ".konjac")
+        sub_files.each do |sub_file|
+          system "$EDITOR #{sub_file}"
         end
       end
 

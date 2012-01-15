@@ -6,6 +6,12 @@ describe Language do
     Language.find(:eng).should == :en
   end
 
+  it "should find French" do
+    Language.find(:french).should == :fr
+    Language.find(:fre).should == :fr
+    Language.find(:fra).should == :fr
+  end
+
   it "should find Japanese" do
     Language.find(:japanese).should == :ja
     Language.find(:jpn).should == :ja

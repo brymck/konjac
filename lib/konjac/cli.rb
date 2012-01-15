@@ -6,13 +6,16 @@ module Konjac
     class << self
       def init_sub_commands
         @valid_commands = SubCommandManager.new
-        @valid_commands.add :extract, [:export, :e, :x], "Extract text from a DOCX file" do
+        @valid_commands.add :edit, [:e], "Edit text extracted from DOCX" do
+          Word.edit_docx_tags(ARGV)
+        end
+        @valid_commands.add :extract, [:export, :x], "Extract text from a DOCX file" do
           Word.extract_docx_tags(ARGV)
         end
         @valid_commands.add :help, [:h, :"?"], "Show help" do
           show_help
         end
-        @valid_commands.add :import, [:i, :m], "Import text back into a DOCX file" do
+        @valid_commands.add :import, [:m], "Import text back into a DOCX file" do
           Word.import_docx_tags(ARGV)
         end
         @valid_commands.add :translate, [:t], "Translate a file" do
