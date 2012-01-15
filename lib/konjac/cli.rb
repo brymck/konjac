@@ -64,8 +64,11 @@ eos
               opt :to, "The language into which to translate", :type => :string
               opt :using, "The names of dictionaries to use", :type => :string,
                 :default => "dict", :multi => true
+              opt :use_cache, "Use cached dictionary", :default => false
+              opt :word, "Translate a word or phrase", :default => false
             end
-            translate ARGV, opts
+            result = translate(ARGV, opts)
+            puts result if opts[:word]
           else
             Trollop::die "unknown subcommand #{cmd.inspect}"
         end
@@ -84,26 +87,28 @@ eos
       private
       
       def translate(files, opts = {})
-        # Get a list of files to translate
-        parsed_files = Utils.parse_files(files)
-        raise FileNotFoundError.new("File not found") if parsed_files.empty?
+        to_lang = Language.find(opts[:to]).to_s
 
-        # Determine from language from first filename if not supplied
-        if opts[:from].nil?
-          opts[:from] = Utils.extract_language_code_from_filename(parsed_files[0])
+        if opts[:word]
+          from_lang = Language.find(opts[:from]).to_s
+          Translator.translate_word ARGV[0].dup, from_lang, to_lang, opts
+        else
+          # Get a list of files to translate
+          parsed_files = Utils.parse_files(files)
+          raise FileNotFoundError.new("File not found") if parsed_files.empty?
+
+          # Determine from language from first filename if not supplied
           if opts[:from].nil?
-            raise InvalidLanguageError.new("You must supply a from language")
+            opts[:from] = Utils.extract_language_code_from_filename(parsed_files[0])
+            if opts[:from].nil?
+              raise InvalidLanguageError.new("You must supply a from language")
+            end
           end
+
+          from_lang = Language.find(opts[:from]).to_s
+
+          Translator.translate_files parsed_files, from_lang, to_lang, opts
         end
-
-        from_lang = Language.find(opts[:from]).to_s
-        to_lang   = Language.find(opts[:to]).to_s
-        puts "adlfjlaksdjfkjsdlfjdks"
-        puts parsed_files
-        puts from_lang
-        puts to_lang
-
-        Translator.translate parsed_files, from_lang, to_lang, opts[:using]
       end
     end
   end

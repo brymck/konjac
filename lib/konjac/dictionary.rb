@@ -7,28 +7,29 @@ module Konjac
 
       BLANK = /^\s*$/
 
-      def load(from_lang, to_lang, dictionaries, opts = {})
-        # Set defaults for optional arguments
-        opts = { :force => false }.merge(opts)
-        dictionaries = ["dict"] if dictionaries.nil?
-        
+      def load(from_lang, to_lang, opts = {})
         # Allow both symbol and string arguments for languages
         from_lang = from_lang.to_s
         to_lang   = to_lang.to_s
 
         # Ignore everything if we've been here before
-        return @pairs if loaded?(from_lang, to_lang, dictionaries) || opts[:force]
+        return @pairs if loaded?(from_lang, to_lang, opts[:using])
+
+        if opts[:use_cache]
+          @pairs = load_serialized(from_lang, to_lang, opts[:using])
+          return @pairs unless @pairs.nil?
+        end
         
         # Build a regex template for the from language
         from_template = build_regex_template(from_lang)
         to_template   = build_replacement_template(from_lang, to_lang)
 
         # Save variables to cache so we can avoid repetitive requests
-        cache_load from_lang, to_lang, dictionaries
+        cache_load from_lang, to_lang, opts[:using]
         
         # Make sure dictionary exists and load
         @dictionary = []
-        dictionaries.each do |dict|
+        opts[:using].each do |dict|
           if dict =~ /[\/.]/
             sub_dictionaries = Dir.glob(File.expand_path(dict))
           else
@@ -49,6 +50,7 @@ module Konjac
           @pairs << pair unless pair.nil?
         end
 
+        save_serialized from_lang, to_lang, dictionaries, @pairs
         @pairs
       end
 
@@ -104,9 +106,10 @@ module Konjac
       # Tests whether the same from language, to language and dictionary path
       # have been loaded before
       def loaded?(from_lang, to_lang, dictionaries)
-        (@from_lang    == from_lang) &&
-        (@to_lang      == to_lang  ) &&
-        (@dictionaries == dictionaries)
+        (@from_lang    == from_lang   ) &&
+        (@to_lang      == to_lang     ) &&
+        (@dictionaries == dictionaries) &&
+        !@pairs.nil?
       end
 
       # Builds a regular expression template for the language depending on
@@ -151,6 +154,30 @@ module Konjac
         @from_lang    = from_lang
         @to_lang      = to_lang
         @dictionaries = dictionaries
+      end
+      
+      def load_serialized(from_lang, to_lang, dictionaries)
+        file_name = File.expand_path("~/.konjac/marshal/%s_%s_%s" %
+          [from_lang, to_lang, dictionaries.join("_")])
+        if File.exists?(file_name)
+          Marshal.load file_name
+        else
+          nil
+        end
+      end
+
+      def save_serialized(from_lang, to_lang, dictionaries, pairs)
+        file_name = File.expand_path("~/.konjac/marshal/%s_%s_%s" %
+          [from_lang, to_lang, dictionaries.join("_")])
+
+        # Create directory structure if necessary
+        unless File.exists?(file_name)
+          FileUtils.mkdir_p File.dirname(file_name)
+        end
+
+        File.open(file_name, "w") do |file|
+          Marshal.dump(pairs, file)
+        end
       end
     end
   end

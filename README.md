@@ -53,20 +53,20 @@ Usage
 
 Translate all text files in the current directory from Japanese into English:
 
-    konjac translate *.txt from japanese to english
+    konjac translate *.txt --from japanese --to english
 
 Utilize a document's implied language (English) and translate into Japanese:
 
-    konjac translate test_en.txt into japanese
+    konjac translate test_en.txt --to japanese
 
 Use multiple dictionaries:
 
-    konjac translate financial_report_en.txt into japanese using finance
+    konjac translate financial_report_en.txt --to japanese --using finance
 
 Extract text from a DOCX document (creates a plain-text `test.konjac` file from
 `test.docx`):
 
-    konjac extract test
+    konjac export test
 
 Import tags file back into DOCX document (file created is named
 `test_imported.docx`):

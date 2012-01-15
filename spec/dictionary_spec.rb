@@ -37,7 +37,7 @@ describe Dictionary do
 
   describe "when converting from English to Japanese" do
     before :each do
-      Dictionary.load "en", "ja", [@dictionary.path]
+      Dictionary.load "en", "ja", { :using => [@dictionary.path] }
     end
 
     it "should correctly load a simple term" do
@@ -68,7 +68,7 @@ describe Dictionary do
 
   describe "when converting from Japanese to English" do
     before :each do
-      Dictionary.load "ja", "en", [@dictionary.path]
+      Dictionary.load "ja", "en", { :using => [@dictionary.path] }
     end
 
     it "should add whitespace to term replacement" do
@@ -78,7 +78,7 @@ describe Dictionary do
 
   describe "when converting from English to Spanish" do
     before :each do
-      Dictionary.load "en", "es", [@dictionary.path]
+      Dictionary.load "en", "es", { :using => [@dictionary.path] }
     end
 
     it "should not add whitespace to term replacement" do
