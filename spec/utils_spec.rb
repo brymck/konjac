@@ -21,12 +21,12 @@ describe Utils do
     end
 
     it "should work when the user does not specify an extension" do
-      files_found = Utils.force_extension("#{Dir.tmpdir}/*", ".konjac")
+      files_found = Utils.parse_files("#{Dir.tmpdir}/*", ".konjac")
       files_found.should include @konjac.path
       files_found.should include @kon2.path
       files_found.should_not include @docx.path
       files_found.should_not include @doc2.path
-      files_found = Utils.force_extension("#{Dir.tmpdir}/*", ".docx")
+      files_found = Utils.parse_files("#{Dir.tmpdir}/*", ".docx")
       files_found.should include @docx.path
       files_found.should include @doc2.path
       files_found.should_not include @konjac.path
@@ -34,12 +34,12 @@ describe Utils do
     end
 
     it "should work when the user does specify an extension" do
-      files_found = Utils.force_extension("#{Dir.tmpdir}/*.docx", ".konjac")
+      files_found = Utils.parse_files("#{Dir.tmpdir}/*.docx", ".konjac")
       files_found.should include @konjac.path
       files_found.should include @kon2.path
       files_found.should_not include @docx.path
       files_found.should_not include @doc2.path
-      files_found = Utils.force_extension("#{Dir.tmpdir}/*.docx", ".docx")
+      files_found = Utils.parse_files("#{Dir.tmpdir}/*.docx", ".docx")
       files_found.should include @docx.path
       files_found.should include @doc2.path
       files_found.should_not include @konjac.path
@@ -47,12 +47,12 @@ describe Utils do
     end
 
     it "should work when the user supplies wildcards" do
-      files_found = Utils.force_extension("#{Dir.tmpdir}/*.*", ".konjac")
+      files_found = Utils.parse_files("#{Dir.tmpdir}/*.*", ".konjac")
       files_found.should include @konjac.path
       files_found.should include @kon2.path
       files_found.should_not include @docx.path
       files_found.should_not include @doc2.path
-      files_found = Utils.force_extension("#{Dir.tmpdir}/*.*", ".docx")
+      files_found = Utils.parse_files("#{Dir.tmpdir}/*.*", ".docx")
       files_found.should include @docx.path
       files_found.should include @doc2.path
       files_found.should_not include @konjac.path

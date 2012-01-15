@@ -12,7 +12,7 @@ describe CLI do
 
   it "should fail on an invalid subcommand" do
     set_argv "invalid"
-    lambda { CLI.start }.should raise_error InvalidCommandError
+    lambda { CLI.start }.should raise_error SystemExit
   end
 
   describe "temporary files" do
@@ -32,25 +32,15 @@ describe CLI do
       @english.rewind
 
       # Set ARGV
-      set_argv "translate", @english.path, "into", "japanese", "using",
-        @dictionary.path
+      set_argv "translate", "-t", "japanese", "-u", @dictionary.path,
+        @english.path
     end
 
     it "should correctly translate English text" do
-      begin
-        CLI.start
-        converted_path = Utils.build_converted_file_name(@english.path, "en", "ja")
-        File.read(@english.path).should == "I like dogs."
-        File.read(converted_path).should == "I like 犬.\n"
-      ensure
-        @dictionary.close!
-        @english.close!
-        File.delete converted_path
-      end
-    end
-
-    it "should return the name of the sub_command" do
-      CLI.start.should == :translate
+      CLI.start
+      converted_path = Utils.build_converted_file_name(@english.path, "en", "ja")
+      File.read(@english.path).should == "I like dogs."
+      File.read(converted_path).should == "I like 犬.\n"
     end
   end
 end

@@ -25,19 +25,16 @@ module Konjac
         "#{dirname}/#{basename}_#{to_lang}#{extname}"
       end
       
-      # Forces a file or list of files to have a specific extension
-      def force_extension(files, ext)
-        result = []
-
+      # Parses a list of files
+      def parse_files(files, ext = nil)
         files = [files] unless files.is_a?(Array)
-
-        files.each do |file|
-          file.sub! /\.[^\\\/]*$/, ""
-          file += "." + ext.tr(".", "")
-          result += Dir.glob(File.expand_path(file))
+        parsed_files = []
+        while !files.empty?
+          file = files.shift
+          file = file.sub(/\.[^\\\/]*$/, "") + ext unless ext.nil?
+          parsed_files += Dir.glob(File.expand_path(file))
         end
-
-        result
+        parsed_files.uniq
       end
     end
   end
