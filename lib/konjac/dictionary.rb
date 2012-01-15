@@ -155,7 +155,7 @@ module Konjac
           if found
             counter -= 1
           else
-            dict << { to_lang => opts[:translation], from_lang => opts[:original] }
+            dict.unshift({ to_lang => opts[:translation], from_lang => opts[:original] })
           end
 
           File.open(path, "w") do |file|
