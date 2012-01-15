@@ -139,8 +139,6 @@ module Konjac
               end
 
               from_term ||= term[from_lang]
-              puts "%s, %s" % [from_term, to_term]
-              puts "%s, %s" % [to_term == opts[:translation], (from_term.is_a?(Regexp) && from_term =~ opts[:original]) || from_term == opts[:original]]
 
               if to_term == opts[:translation]
                 if from_term.is_a?(Regexp) && from_term =~ opts[:original]
