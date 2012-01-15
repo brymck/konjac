@@ -9,6 +9,7 @@ module Konjac
 
     class << self
       SUB_COMMANDS = {
+        "add"       => "Add a definition to translation memory",
         "edit"      => "Edit the tags file for a .docx file",
         "export"    => "Export text tags from a .docx file",
         "import"    => "Import text tags into a .docx file",
@@ -41,6 +42,17 @@ eos
         cmd = ARGV.shift
         sc_banner = BANNER % [SUB_COMMANDS[cmd], cmd, ""]
         cmd_opts = case cmd
+          when "add"
+            opts = Trollop::options do
+              banner sc_banner
+              opt :original, "The original word or phrase", :type => :string
+              opt :translation, "The translated word or phrase", :type => :string, :short => :r
+              opt :from, "The language from which to translate", :type => :string
+              opt :to, "The language into which to translate", :type => :string
+              opt :using, "The names of dictionaries to use", :type => :string,
+                :default => "dict", :multi => true
+            end
+            Dictionary.add_word opts
           when "edit"
             Trollop::options do
               banner sc_banner

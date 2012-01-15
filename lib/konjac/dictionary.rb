@@ -28,24 +28,11 @@ module Konjac
         cache_load from_lang, to_lang, opts[:using]
         
         # Make sure dictionary exists and load
-        @dictionary = []
-        opts[:using].each do |dict|
-          if dict =~ /[\/.]/
-            sub_dictionaries = Dir.glob(File.expand_path(dict))
-          else
-            sub_dictionaries = Dir.glob(File.expand_path("~/.konjac/#{dict}.yml"))
-          end
-
-          sub_dictionaries.each do |sub_dict|
-            verify_dictionary_exists sub_dict
-            temp = ::YAML.load_file(sub_dict)
-            @dictionary += temp if temp.is_a?(Array)
-          end
-        end
+        dictionary = build_dictionary(opts[:using])
 
         # Build a list of search and replace pairs
         @pairs = []
-        @dictionary.each do |term|
+        dictionary.each do |term|
           pair = extract_pair_from_term(term, from_lang, to_lang, from_template, to_template)
           @pairs << pair unless pair.nil?
         end
@@ -132,6 +119,55 @@ module Konjac
         end
       end
 
+      # Adds a word to the dictionary
+      def add_word(opts = {})
+        from_lang    = Language.find(opts[:from]).to_s
+        to_lang      = Language.find(opts[:to]).to_s
+        dictionaries = find_dictionaries(opts[:using])
+        counter      = dictionaries.length
+
+        dictionaries.each do |path|
+          dict = ::YAML.load_file(path)
+          found = false
+          dict.each do |term|
+            if term.has_key?(to_lang)
+              if term[to_lang].is_a?(Hash)
+                to_term   = term[to_lang][to_lang]
+                from_term = term[to_lang][from_lang]
+              else
+                to_term = term[to_lang]
+              end
+
+              from_term ||= term[from_lang]
+              puts "%s, %s" % [from_term, to_term]
+              puts "%s, %s" % [to_term == opts[:translation], (from_term.is_a?(Regexp) && from_term =~ opts[:original]) || from_term == opts[:original]]
+
+              if to_term == opts[:translation]
+                if from_term.is_a?(Regexp) && from_term =~ opts[:original]
+                  found = true
+                  break
+                elsif from_term == opts[:original]
+                  found = true
+                  break
+                end
+              end
+            end
+          end
+
+          if found
+            counter -= 1
+          else
+            dict << { to_lang => opts[:translation], from_lang => opts[:original] }
+          end
+
+          File.open(path, "w") do |file|
+            YAML.dump dict, file
+          end
+        end
+
+        counter
+      end
+
       private
 
       def parse_language(lang)
@@ -178,6 +214,36 @@ module Konjac
         File.open(file_name, "w") do |file|
           Marshal.dump(pairs, file)
         end
+      end
+
+      # Builds a list of dictionaries from the supplied files, defaulting to
+      # ~/.konjac/*.yml
+      def build_dictionary(files)
+        dictionary = []
+        find_dictionaries(files).each do |dict|
+          verify_dictionary_exists dict
+          temp = ::YAML.load_file(dict)
+          dictionary += temp if temp.is_a?(Array)
+        end
+        dictionary
+      end
+
+      def find_dictionaries(files)
+        paths = []
+        files.each do |file|
+          if file =~ /[\/.]/
+            full_path = File.expand_path(file)
+          else
+            full_path = File.expand_path("~/.konjac/#{file}.yml")
+          end
+          
+          if File.basename(file) =~ /\*/
+            FileUtils.touch full_path unless File.exists?(full_path)
+          end
+
+          paths += Dir.glob(full_path)
+        end
+        paths.uniq
       end
     end
   end

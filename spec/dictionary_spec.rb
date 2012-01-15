@@ -85,4 +85,20 @@ describe Dictionary do
       Dictionary.pairs[0].should == [/\bmouth\b/i, "boca"]
     end
   end
+
+  describe "when trying to add a word" do
+    before :each do
+      @opts = { :from => "en", :to => "ja", :using => [@dictionary.path] }
+    end
+
+    it "should fail if the word already exists" do
+      @opts.merge!({ :original => "dogs", :translation => "犬" })
+      Dictionary.add_word(@opts).should == 0
+    end
+
+    it "should succeed if the word does not already exist" do
+      @opts.merge!({ :original => "tree", :translation => "木" })
+      Dictionary.add_word(@opts).should == 1
+    end
+  end
 end
