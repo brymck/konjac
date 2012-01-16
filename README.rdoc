@@ -133,6 +133,18 @@ Run
 Now, obviously that does require some fiddling to make it more grammatical, but
 it's a start (=> <tt>僕は犬が好きだ。</tt>)
 
+== Documentation
+
+Should be simple enough to generate yourself:
+
+    git clone git://github.com/brymck/konjac
+    cd konjac
+    bundle update
+    rake rdoc
+    rm !(doc)
+    mv doc/rdoc/* .
+    rm -rf doc
+
 == Name
 
 <em>Hon'yaku</em> means "translation" in Japanese. This utility relies on a
