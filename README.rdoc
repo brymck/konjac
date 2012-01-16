@@ -66,14 +66,14 @@ Translate a word using your dictionary:
 
 Store terms in <tt>~/.konjac/dict.yml</tt>.
 
-_Simple (two-way equivalent terms)_ - English "I" is equivalent to Spanish
+<em>Simple (two-way equivalent terms)</em> - English "I" is equivalent to Spanish
 "yo":
 
     -
       en: I
       es: yo
 
-_Not as simple_ - Japanese lacks a plural, therefore both "dog" and "dogs"
+<em>Not as simple</em> - Japanese lacks a plural, therefore both "dog" and "dogs"
 translate as 犬:
 
     -
@@ -135,7 +135,8 @@ it's a start (=> <tt>僕は犬が好きだ。</tt>)
 
 == Name
 
-_Hon'yaku_ means "translation" in Japanese. This utility relies on a YAML
-wordlist. _Konnyaku_ (Japanese for "konjac") rhymes with _hon'yaku_ and is a
-type of yam. Also, Doraemon had something called a _hon'yaku konnyaku_ that
-allowed one to listen to animals. But I digress.
+<em>Hon'yaku</em> means "translation" in Japanese. This utility relies on a
+YAML wordlist. <em>Konnyaku</em> (Japanese for "konjac") rhymes with
+<em>hon'yaku</em> and is a type of yam. Also, Doraemon had something called a
+<em>hon'yaku konnyaku</em> that allowed one to listen to animals. But I
+digress.
