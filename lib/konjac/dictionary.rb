@@ -197,7 +197,7 @@ module Konjac
         file_name = File.expand_path("~/.konjac/marshal/%s_%s_%s" %
           [from_lang, to_lang, dictionaries.join("_")])
         if File.exists?(file_name)
-          Marshal.load file_name
+          Marshal.load File.read(file_name)
         else
           nil
         end

@@ -91,7 +91,8 @@ eos
               opt :to, I18n.t(:to, :scope => :opts), :type => :string
               opt :using, I18n.t(:using, :scope => :opts), :type => :string,
                 :default => "dict", :multi => true
-              opt :use_cache, I18n.t(:use_cache, :scope => :opts), :default => false
+              opt :use_cache, I18n.t(:use_cache, :scope => :opts),
+                :default => false, :short => :c
               opt :word, I18n.t(:word, :scope => :opts), :default => false
               opt :help, I18n.t(:help, :scope => :opts)
             end

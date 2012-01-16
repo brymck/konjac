@@ -10,20 +10,17 @@ module Konjac
         Utils.verify_file CONFIG_PATH, "--- {}"
         config = YAML.load_file(CONFIG_PATH)
         config = {} unless config.is_a?(Hash)
-        @opts = {
-          :language => :en
-        }.merge config
 
-        set_language
+        set_language config[:language], ENV["LANG"], :en
         save
       end
 
       def language
-        @opts[:language]
+        I18n.locale
       end
 
       def language=(lang)
-        @opts[:language] = Language.find(lang).to_sym || @opts[:language]
+        set_language lang, I18n.locale
         save
       end
 
@@ -35,14 +32,23 @@ module Konjac
 
       private
 
-      def set_language
+      def set_language(*params)
         I18n.load_path = Dir[File.join(File.dirname(__FILE__), "..", "..", "locales", "*.yml")]
         I18n.default_locale = :en
-        if I18n.available_locales.include?(@opts[:language])
-          I18n.locale = @opts[:language]
-        else
-          I18n.locale = I18n.default_locale
+
+        # Check each parameter to see whether it matches with an available
+        # language
+        params.each do |param|
+          if !param.nil?
+            lang = Language.find(param).to_sym rescue nil
+            if I18n.available_locales.include?(lang)
+              I18n.locale = lang
+              return I18n.locale
+            end
+          end
         end
+
+        I18n.locale = I18n.default_locale
       end
     end
   end
