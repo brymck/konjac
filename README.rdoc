@@ -1,0 +1,139 @@
+= konjac - a Ruby command-line utility for translating files using a YAML wordlist
+
+Homepage::      http://www.brymck.com
+Author::        Bryan McKelvey
+Copyright::     (c) 2012 Bryan McKelvey
+License::       MIT
+
+== Installation
+
+=== Stable
+
+With {Ruby}(http://www.ruby-lang.org/en/downloads/) installed, run the
+following in your terminal:
+
+    gem install konjac
+
+=== Development
+
+With Ruby and {Git}(http://help.github.com/set-up-git-redirect) installed,
+navigate in your command line to a directory of your choice, then run:
+
+    git clone git://github.com/brymck/konjac.git
+    cd konjac
+    rake install
+
+== Usage
+
+Translate all text files in the current directory from Japanese into English:
+
+    konjac translate *.txt --from japanese --to english
+    konjac translate *.txt -f ja -t en
+
+Use multiple dictionaries:
+
+    konjac translate financial_report_en.txt --to japanese --using {finance,fluffery}
+    konjac translate financial_report_en.txt -t ja -u {finance,fluffery}
+
+Extract text from a .docx document (creates a plain-text <tt>test.konjac</tt> file from
+<tt>test.docx</tt>):
+
+    konjac export test
+
+Extract text from a .docx document and process with a dictionary
+
+    konjac export test.docx --from japanese --to english --using pre
+    konjac export test.docx -f ja -t en -u pre
+
+Import tags file back into .docx document (file created is named
+<tt>test_imported.docx</tt>):
+
+    konjac import test
+
+Add a word to your dictionary:
+
+    konjac add --original dog --from english --translation 犬 --to japanese
+    konjac add -o dog -f en -r 犬 -t ja
+
+Translate a word using your dictionary:
+
+    konjac translate dog --from english --to japanese --word
+    konjac translate dog -f en -t ja -w
+
+== Dictionary Format
+
+Store terms in <tt>~/.konjac/dict.yml</tt>.
+
+*Simple (two-way equivalent terms)* - English "I" is equivalent to Spanish
+"yo":
+
+    -
+      en: I
+      es: yo
+
+*Not as simple* - Japanese lacks a plural, therefore both "dog" and "dogs"
+translate as 犬:
+
+    -
+      en: dog
+      ja:
+        ja: 犬
+        en: dogs?  # i.e. the regular expression /dogs?/
+
+== Extended Example
+
+~/.konjac/dict.yml:
+
+    -
+      en: I
+      ja: 僕
+    -
+      en: like
+      ja: 好き
+    -
+      en:
+        en: dog
+        ja: 犬
+      ja:
+        ja: 犬
+        en: dogs?
+    - # Periods
+      en:
+        en: ". "
+        ja: 。
+      ja:
+        ja: 。
+        en: !ruby/regexp '/\.(?:\s|$)/'
+    - # Spaces between non-ASCII characters
+      en:
+        en: " "
+        ja: !ruby/regexp /\s{2,}/
+      ja:
+        ja: "\\1\\2"
+        en: !ruby/regexp /([^\w])\s([^\w])/
+    - # Delete extraneous spaces
+      en:
+        en: ""
+        ja: !ruby/regexp /\s(?=[.,:]|$)/
+
+~/.konjac/test_en.txt:
+
+    I like dogs.
+
+Run
+
+    konjac translate ~/.konjac/test_en.txt into japanese
+
+~/.konjac/test_ja.txt (result):
+
+    僕好き犬。
+
+Now, obviously that does require some fiddling to make it more grammatical, but
+it's a start (=> <tt>僕は犬が好きだ。</tt>)
+
+== Name
+
+*Hon'yaku* means "translation" in Japanese. This utility relies on a YAML
+wordlist. *Konnyaku* (Japanese for "konjac") rhymes with *hon'yaku* and is a
+type of yam. Also, Doraemon had something called a *hon'yaku konnyaku* that
+allowed one to listen to animals. But I digress.
