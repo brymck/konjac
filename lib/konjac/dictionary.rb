@@ -47,6 +47,7 @@ module Konjac
           # matches or a simple string
           if term[to_lang].is_a?(Hash)
             to_term = term[to_lang][to_lang]
+            no_space = term[to_lang]["no_space"]
 
             if term[to_lang].has_key?(from_lang)
               from_term = term[to_lang][from_lang]
@@ -71,7 +72,7 @@ module Konjac
                                      ("i" unless from_term =~ /[A-Z]/))
             end
 
-            to_term = to_template % to_term unless to_term =~ BLANK
+            to_term = to_template % to_term unless to_term =~ BLANK || no_space
 
             return [ from_term, to_term ]
           end
@@ -130,7 +131,6 @@ module Konjac
 
         dictionaries.each do |path|
           dict = ::YAML.load_file(path)
-          puts dict
           found = false
           dict.each do |term|
             if term.has_key?(to_lang)
