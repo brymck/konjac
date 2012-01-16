@@ -137,6 +137,7 @@ it's a start (=> <tt>僕は犬が好きだ。</tt>)
 
 Should be simple enough to generate yourself:
 
+    rm -rf konjac
     git clone git://github.com/brymck/konjac
     cd konjac
     bundle update
