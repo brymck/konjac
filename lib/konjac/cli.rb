@@ -5,7 +5,8 @@ require "yaml"
 module Konjac
   # The class containing the command line interface
   module CLI
-    class Color  # :nodoc:
+    # A helper class for formatting text sent to the terminal
+    class Color
       extend Term::ANSIColor
     end
 
