@@ -124,7 +124,7 @@ translate as 犬:
 
 Run
 
-    konjac translate ~/.konjac/test_en.txt into japanese
+    konjac translate ~/.konjac/test_en.txt --to japanese
 
 ~/.konjac/test_ja.txt (result):
 
