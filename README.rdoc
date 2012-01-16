@@ -141,7 +141,7 @@ Should be simple enough to generate yourself:
     cd konjac
     bundle update
     rake rdoc
-    rm !(doc)
+    rm -rf !(doc)
     mv doc/rdoc/* .
     rm -rf doc
 
