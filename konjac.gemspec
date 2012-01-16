@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "i18n"
   s.add_runtime_dependency "nokogiri"
+  s.add_runtime_dependency "sdoc"
   s.add_runtime_dependency "term-ansicolor"
   s.add_runtime_dependency "trollop"
   s.add_development_dependency "autotest"
@@ -28,5 +29,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency "autotest-growl"
   s.add_development_dependency "bundler"
   s.add_development_dependency "rspec"
-  s.add_development_dependency "sdoc"
 end
