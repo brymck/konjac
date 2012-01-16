@@ -11,7 +11,7 @@ describe CLI do
   end
 
   it "should fail on an invalid subcommand" do
-    set_argv "invalid"
+    set_argv "invalid", "--quiet"
     lambda { CLI.start }.should raise_error SystemExit
   end
 

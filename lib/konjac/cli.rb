@@ -16,6 +16,8 @@ module Konjac
         "translate" => "Translate a file according to ~/.konjac/dict.yml"
       }
       BANNER = <<-eos
+#{Color.bold { Color.underscore { "KONJAC" } }}
+
 #{Color.bold "%s"}
 
 #{Color.bold "Usage:"}
@@ -24,6 +26,7 @@ where [#{Color.underscore "options"}] are:
 eos
 
       def start
+        ARGV << "-h" if ARGV.empty?
         global_opts = Trollop::options do
           version "konjac #{Konjac::VERSION} (c) 2012 Bryan McKelvey"
           banner BANNER % [
@@ -86,7 +89,11 @@ eos
             result = translate(ARGV, opts)
             puts result if opts[:word]
           else
-            Trollop::die "unknown subcommand #{cmd.inspect}"
+            if global_opts[:quiet]
+              raise SystemExit
+            else
+              Trollop::die "unknown subcommand #{cmd.inspect}"
+            end
         end
       end
 
