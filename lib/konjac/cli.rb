@@ -59,11 +59,15 @@ eos
               opt :editor, "A command indicating which editor to use (e.g. vi %s)"
             end
             Word.edit_docx_tags ARGV, opts
-          when "extract", "export"
-            Trollop::options do
+          when "export"
+            opts = Trollop::options do
               banner sc_banner
+              opt :from, "The language from which to translate", :type => :string
+              opt :to, "The language into which to translate", :type => :string
+              opt :using, "The names of dictionaries to use", :type => :string,
+                :default => "dict", :multi => true
             end
-            Word.extract_docx_tags ARGV
+            Word.export_docx_tags ARGV, opts
           when "import"
             Trollop::options do
               banner sc_banner

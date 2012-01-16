@@ -17,12 +17,16 @@ module Konjac
         end
       end
 
+      # Loads the dictionary, then translates a word or phrase from the
+      # specified language into another language
       def translate_word(word, from_lang, to_lang, opts = {})
         load_dictionary from_lang, to_lang, opts
 
         translate_content word
       end
 
+      # Translates content according to the current dictionaries and to/from
+      # languages
       def translate_content(content)
         @pairs.each do |pair|
           search, replace = pair
@@ -32,8 +36,7 @@ module Konjac
         content
       end
 
-      private
-
+      # Loads the parsed contents of a dictionary into the translator
       def load_dictionary(from_lang, to_lang, opts)
         @pairs = Dictionary.load(from_lang, to_lang, opts)
       end

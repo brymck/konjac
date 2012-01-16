@@ -5,7 +5,7 @@ module Konjac
     class << self
       # Extracts the text content from a Microsoft Word 2003+ Document
       def import_docx_tags(files)
-        sub_files = Utils.force_extension(files, ".docx")
+        sub_files = Utils.parse_files(files, ".docx")
         sub_files.each do |sub_file|
           # Build the list of paths we need to work with
           dirname   = File.dirname(sub_file)
@@ -46,9 +46,19 @@ module Konjac
         end
       end
 
-      # Extracts the text content from a Microsoft Word 2003+ Document
-      def extract_docx_tags(files)
-        sub_files = Utils.force_extension(files, ".docx")
+      # Exports the text content from a Microsoft Word 2003+ Document
+      def export_docx_tags(files, opts = {})
+        # Determine whether to attempt translating
+        if opts[:from_given] && opts[:to_given]
+          from_lang = Language.find(opts[:from])
+          to_lang   = Language.find(opts[:to])
+          unless from_lang.nil? || to_lang.nil?
+            Translator.load_dictionary from_lang, to_lang, opts
+            attempting_to_translate = true
+          end
+        end
+
+        sub_files = Utils.parse_files(files, ".docx")
         sub_files.each do |sub_file|
           # Build a list of all the paths we're working with
           dirname    = File.dirname(sub_file)
@@ -87,9 +97,15 @@ module Konjac
 
             # Write the tags file
             index = 0
+
             cleaner.xpath("//w:t").each do |node|
               tags_file.puts "[[KJ-%i]]%s" % [index, additional_info(node)]
               tags_file.puts "> %s" % node.content
+              if attempting_to_translate
+                tags_file.puts Translator.translate_content(node.content)
+              else
+                tags_file.puts node.content
+              end
               index += 1
             end
           end

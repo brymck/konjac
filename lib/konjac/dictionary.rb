@@ -86,7 +86,9 @@ module Konjac
       def verify_dictionary_exists(full_path)
         unless File.file?(full_path)
           FileUtils.mkpath File.dirname(full_path)
-          FileUtils.touch full_path
+          File.open(full_path, "w") do |file|
+            file.puts "--- []"
+          end
         end
       end
 
@@ -128,6 +130,7 @@ module Konjac
 
         dictionaries.each do |path|
           dict = ::YAML.load_file(path)
+          puts dict
           found = false
           dict.each do |term|
             if term.has_key?(to_lang)
@@ -235,8 +238,10 @@ module Konjac
             full_path = File.expand_path("~/.konjac/#{file}.yml")
           end
           
-          if File.basename(file) =~ /\*/
-            FileUtils.touch full_path unless File.exists?(full_path)
+          unless File.basename(file) =~ /\*/ || File.exists?(full_path)
+            File.open(full_path, "w") do |file|
+              file.puts "--- []"
+            end
           end
 
           paths += Dir.glob(full_path)
