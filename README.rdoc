@@ -18,11 +18,13 @@ following in your terminal:
 
 === Development
 
-With Ruby and {Git}[http://help.github.com/set-up-git-redirect] installed,
-navigate in your command line to a directory of your choice, then run:
+With Ruby, {Git}[http://help.github.com/set-up-git-redirect] and
+{Bundler}[http://gembundler.com/] installed, navigate in your command line to a
+directory of your choice, then run:
 
     git clone git://github.com/brymck/konjac.git
     cd konjac
+    bundle update
     rake install
 
 == Usage
@@ -149,8 +151,9 @@ Should be simple enough to generate yourself:
 == Name
 
 <em>Hon'yaku</em> means "translation" in Japanese. This utility relies on a
-YAML wordlist. <em>Konnyaku</em> (Japanese for "konjac") rhymes with
-<em>hon'yaku</em> and is a type of yam. Also,
+<b>YAM</b>L wordlist. <em>Konnyaku</em> (Japanese for
+"{konjac}[http://en.wikipedia.org/wiki/Konjac]") rhymes with <em>hon'yaku</em>
+and is a type of <b>yam</b>. Also,
 {Doraemon}[http://en.wikipedia.org/wiki/Doraemon] had something called a
 <em>hon'yaku konnyaku</em> that allowed him to speak every language. IIRC it
 worked with animals too. But I digress.
