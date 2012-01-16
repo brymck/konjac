@@ -36,6 +36,16 @@ module Konjac
         end
         parsed_files.uniq
       end
+
+      # Verifies that a file exists, writing initial content to it if not
+      def verify_file(path, initial_content = "")
+        unless File.exists?(path)
+          FileUtils.mkdir_p File.dirname(path)
+          File.open(path, "w") do |file|
+            file.puts initial_content
+          end
+        end
+      end
     end
   end
 end
