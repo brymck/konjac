@@ -150,6 +150,7 @@ Should be simple enough to generate yourself:
 
 <em>Hon'yaku</em> means "translation" in Japanese. This utility relies on a
 YAML wordlist. <em>Konnyaku</em> (Japanese for "konjac") rhymes with
-<em>hon'yaku</em> and is a type of yam. Also, Doraemon had something called a
+<em>hon'yaku</em> and is a type of yam. Also,
+{Doraemon}[http://en.wikipedia.org/wiki/Doraemon] had something called a
 <em>hon'yaku konnyaku</em> that allowed him to speak every language. IIRC it
 worked with animals too. But I digress.
