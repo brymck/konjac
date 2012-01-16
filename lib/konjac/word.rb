@@ -179,8 +179,8 @@ module Konjac
 
       # Delete extraneous attributes for comparison
       def clean_hash(hash)
-        hash.delete :t
-        hash[:rPr][:rFonts][:attributes].delete :hint
+        delete_attribute_or_child hash, :t
+        delete_attribute_or_child hash, :rPr, :rFonts, :attributes, :hint
       end
 
       # Get additional information on the node for context in tags file
@@ -193,6 +193,18 @@ module Konjac
         else
           "  #=> #{info.join(", ")}"
         end
+      end
+
+      private
+
+      def delete_attribute_or_child(node, *hierarchy)
+        last_member = hierarchy.pop
+        
+        hierarchy.each do |member|
+          node = node[member] unless node.nil?
+        end
+
+        node.delete last_member unless node.nil?
       end
     end
   end
