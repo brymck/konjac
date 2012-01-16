@@ -39,6 +39,7 @@ eos
 
         # Get subcommand
         cmd = ARGV.shift
+        ARGV << "-h" if ARGV.empty?
         sc_banner = BANNER % [I18n.t(cmd, :scope => :subcommands), cmd, "\n"]
         cmd_opts = case cmd
           when "add"
