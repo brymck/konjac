@@ -1,4 +1,4 @@
-= konjac
+= Konjac
 
 A Ruby command-line utility for translating files using a YAML wordlist
 

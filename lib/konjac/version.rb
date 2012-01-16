@@ -1,3 +1,4 @@
 module Konjac
-  VERSION = "0.1.8.7"
+  # The current version number of Konjac
+  VERSION = "0.1.9"
 end

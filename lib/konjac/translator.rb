@@ -1,7 +1,12 @@
 # coding: utf-8
 module Konjac
+  # A class consisting of functions for translation
   module Translator
     class << self
+      # Translates a file or list of files
+      #
+      #   path = Dir[File.expand_path("~/.konjac/test_en.txt")]
+      #   Translator.translate_files path, :en, :ja, :using => [:dict]
       def translate_files(files, from_lang, to_lang, opts = {})
         load_dictionary from_lang, to_lang, opts
         

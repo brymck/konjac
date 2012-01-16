@@ -1,5 +1,5 @@
 en:
-  banner: konjac is a Ruby command-line utility for translating files using a YAML wordlist
+  banner: Konjac is a Ruby command-line utility for translating files using a YAML wordlist
   filenames: filenames
   me: Bryan McKelvey
   options: options

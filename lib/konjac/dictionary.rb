@@ -1,12 +1,27 @@
 require "yaml"
 
 module Konjac
+  # A module for loading and manipulating the user's dictionaries
   module Dictionary
     class << self
-      attr_accessor :from_lang, :to_lang, :dictionaries, :pairs
+      # The most recent language from which to translate
+      attr_accessor :from_lang
+      
+      # The most recent language into which to translated
+      attr_accessor :to_lang
+      
+      # The dictionaries currently in use
+      attr_accessor :dictionaries
+      
+      # The current pairs
+      attr_accessor :pairs
 
+      # A regular expression used to determine whether a string is blank
       BLANK = /^\s*$/
 
+      # Loads the specified languages and dictionaries
+      #
+      #   Dictionary.load :en, :ja, :using => [:dict]
       def load(from_lang, to_lang, opts = {})
         # Allow both symbol and string arguments for languages
         from_lang = from_lang.to_s
@@ -41,6 +56,8 @@ module Konjac
         @pairs
       end
 
+      # Extracts a regular expression and string replacement pair from a term
+      # in the Dictionary, based on the supplied languages and their templates
       def extract_pair_from_term(term, from_lang, to_lang, from_template, to_template)
         if term.has_key?(to_lang)
           # Build to term depending on whether it's a hash for complex
@@ -171,29 +188,16 @@ module Konjac
 
       private
 
-      def parse_language(lang)
-        if @dictionary["languages"].has_key?(lang)
-          return lang
-        else
-          @dictionary["languages"].each do |main, alternatives|
-            return main if alternatives.include?(lang)
-          end
-
-          # If no match is found, give an error message and exit
-          raise Exceptions::InvalidLanguageError.new("No match found for language \"#{lang}\"")
-          exit 1
-        end
-      end
-
       # Caches variables so we can determine later on whether to reload the
       # dictionaries or not
-      def cache_load(from_lang, to_lang, dictionaries)
+      def cache_load(from_lang, to_lang, dictionaries)  # :doc:
         @from_lang    = from_lang
         @to_lang      = to_lang
         @dictionaries = dictionaries
       end
       
-      def load_serialized(from_lang, to_lang, dictionaries)
+      # Loads a marshalled Dictionary
+      def load_serialized(from_lang, to_lang, dictionaries)  # :doc:
         file_name = File.expand_path("~/.konjac/marshal/%s_%s_%s" %
           [from_lang, to_lang, dictionaries.join("_")])
         if File.exists?(file_name)
@@ -203,7 +207,8 @@ module Konjac
         end
       end
 
-      def save_serialized(from_lang, to_lang, dictionaries, pairs)
+      # Saves a marshalled Dictionary
+      def save_serialized(from_lang, to_lang, dictionaries, pairs)  # :doc:
         file_name = File.expand_path("~/.konjac/marshal/%s_%s_%s" %
           [from_lang, to_lang, dictionaries.join("_")])
 
@@ -219,7 +224,7 @@ module Konjac
 
       # Builds a list of dictionaries from the supplied files, defaulting to
       # ~/.konjac/*.yml
-      def build_dictionary(files)
+      def build_dictionary(files)  # :doc:
         dictionary = []
         find_dictionaries(files).each do |dict|
           verify_dictionary_exists dict
@@ -229,9 +234,11 @@ module Konjac
         dictionary
       end
 
-      def find_dictionaries(files)
+      # Finds dictionaries based on the supplied Array
+      def find_dictionaries(files)  # :doc:
         paths = []
         files.each do |file|
+          file = file.to_s
           if file =~ /[\/.]/
             full_path = File.expand_path(file)
           else

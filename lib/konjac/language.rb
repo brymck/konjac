@@ -1,7 +1,13 @@
 module Konjac
+  # A class for language lookup
   module Language
     class << self
+      # Languages that don't use spaces. Obviously this is an incomplete list.
       LANGUAGES_WITHOUT_SPACES = [:ar, :he, :ja, :zh]
+
+      # A hash list of languages. The keys are the two-letter ISO codes and the
+      # values are alternative names, including the three-letter ISO code and
+      # the English name
       LIST = {
         :ab => [:abkhazian,           :abk],
         :aa => [:afar,                :aar],
@@ -216,7 +222,13 @@ module Konjac
         :zu => [:zulu,                :zul]
       }
 
-      # Finds the two-letter code for the specified language
+      # Finds the two-letter code for the specified language.
+      #
+      #   Language.find(:english)  # => :en
+      #   Language.find(:eng)      # => :en
+      #   Language.find(:en)       # => :en
+      #   Language.find(:japanese) # => :ja
+      #   Language.find(:klingon)  # => raises Konjac::InvalidLanguageError
       def find(lang)
         # Allow function to accept both symbol and string arguments
         lang = lang.to_sym
@@ -243,7 +255,7 @@ module Konjac
       private
 
       # Convert to underscore case
-      def underscore(str)
+      def underscore(str)  # :doc:
         str.to_s.                              # allow symbols and strings
         gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').  # underscore-delimit caps
         gsub(/([a-z\d])\s?([A-Z])/,'\1_\2').   # underscore-delimit words

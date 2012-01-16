@@ -1,4 +1,6 @@
 module Konjac
+  # A handful of functions and tools with no other home, primarily for
+  # manipulating file names and paths
   module Utils
     class << self
       # Extracts the two letter language code from a filename

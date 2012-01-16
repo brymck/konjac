@@ -14,6 +14,7 @@ RDoc::Task.new do |rdoc|
   rdoc.options << "-c" << "utf-8"
   rdoc.options << "-g"                   # link to GitHub
   rdoc.options << "-m" << "README.rdoc"  # use README.rdoc as main file
+  rdoc.options << "-v"                   # verbose
 
   rdoc.rdoc_files.include "README.rdoc"
   rdoc.rdoc_files.include "ext/**/*.{c, h, rb}"

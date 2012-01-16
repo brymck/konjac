@@ -3,13 +3,17 @@ require "trollop"
 require "yaml"
 
 module Konjac
+  # The class containing the command line interface
   module CLI
-    class Color
+    class Color  # :nodoc:
       extend Term::ANSIColor
     end
 
     class << self
+      # A list of valid subcommands
       SUB_COMMANDS = ["add", "edit", "export", "import", "language", "translate"]
+
+      # The banner to displaying when requesting help through the command line
       BANNER = <<-eos
 #{Color.bold { Color.underscore { "KONJAC" } }}
 
@@ -20,6 +24,8 @@ module Konjac
 #{I18n.t(:where_options) % Color.underscore(I18n.t(:options))}
 eos
 
+      # Starts the command line, parsing arguments passed via <tt>ARGV</tt> and
+      # running the respective commands
       def start
         ARGV << "-h" if ARGV.empty?
         global_opts = Trollop::options do
@@ -119,7 +125,8 @@ eos
 
       private
       
-      def translate(files, opts = {})
+      # Parse commands to determine what should be translated and how
+      def translate(files, opts = {})  # :doc:
         to_lang = Language.find(opts[:to]).to_s
 
         if opts[:word]

@@ -1,9 +1,10 @@
-# This really needs cleanup
-
 module Konjac
+  # A singleton for dealing with extracting and importing tags from {Microsoft
+  # Word}[http://office.microsoft.com/en-us/word/] 2003+ documents
   module Word
     class << self
-      # Extracts the text content from a Microsoft Word 2003+ Document
+      # Imports the text content of a tag file into a {Microsoft
+      # Word}[http://office.microsoft.com/en-us/word/] 2003+ document
       def import_docx_tags(files)
         sub_files = Utils.parse_files(files, ".docx")
         sub_files.each do |sub_file|
@@ -46,7 +47,8 @@ module Konjac
         end
       end
 
-      # Exports the text content from a Microsoft Word 2003+ Document
+      # Exports the text content of {Microsoft
+      # Word}[http://office.microsoft.com/en-us/word/] 2003+ document
       def export_docx_tags(files, opts = {})
         # Determine whether to attempt translating
         if opts[:from_given] && opts[:to_given]
@@ -117,7 +119,7 @@ module Konjac
         end
       end
 
-      # Opens the .konjac tag files for the specified DOCX files
+      # Opens the .konjac tag files for the specified .docx files
       def edit_docx_tags(files)
         sub_files = Utils.force_extension(files, ".konjac")
         sub_files.each do |sub_file|
@@ -129,13 +131,14 @@ module Konjac
 
       # Performs a comparison between two nodes and accepts them as equivalent
       # if the differences are very minor
-      def compare_nodes(a, b)
+      def compare_nodes(a, b)  # :doc:
         c = clean_hash(xml_node_to_hash(a))
         d = clean_hash(xml_node_to_hash(b))
         c == d
       end
 
-      def xml_node_to_hash(node)
+      # Converts an XML node into a Ruby hash
+      def xml_node_to_hash(node)  # :doc:
         # If we are at the root of the document, start the hash
         if node.element?
           result_hash = {}
@@ -173,18 +176,19 @@ module Konjac
         end
       end
 
-      def prepare(data)
+      # Prepares data according to whether it's string or integer content
+      def prepare(data)  # :doc:
         (data.class == String && data.to_i.to_s == data) ? data.to_i : data
       end
 
       # Delete extraneous attributes for comparison
-      def clean_hash(hash)
+      def clean_hash(hash)  # :doc:
         delete_attribute_or_child hash, :t
         delete_attribute_or_child hash, :rPr, :rFonts, :attributes, :hint
       end
 
       # Get additional information on the node for context in tags file
-      def additional_info(node)
+      def additional_info(node)  # :doc:
         info = []
         info << "hyperlink" if node.parent.parent.name == "hyperlink"
 
@@ -195,9 +199,12 @@ module Konjac
         end
       end
 
-      private
-
-      def delete_attribute_or_child(node, *hierarchy)
+      # Deletes the specified attribute or child node for the supplied node,
+      # following the hierarchy provided
+      #
+      # Delete <tt>hash[:rPr][:rFonts][:attributes][:hint]</tt>:
+      #   delete_attribute_or_child hash, :rPr, :rFonts, :attributes, :hint
+      def delete_attribute_or_child(node, *hierarchy)  # :doc:
         last_member = hierarchy.pop
         
         hierarchy.each do |member|
