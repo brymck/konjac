@@ -1,24 +1,26 @@
 ja:
   banner: KonjacはYAML辞書でファイルを翻訳するRubyのコマンドライン・ユーティリティです。
-  filenames: ファイル名
+  filenames_arg: <ファイル名>+
+  filenames_or_word_arg: <ファイル名>+ または <テキスト>
   me: ブライアン・マッケルビー
   options: オプション
   subcommand: サブコマンド
   unknown_subcommand: 不明なサブコマンド：%s
   usage: 使い方：
-  where_options: "使用できる[%s]は"
-  where_subcommand: "使用できる[%s]は"
+  where_options: "使用可能な[%s]は、以下のとおりです："
+  where_subcommand: "使用可能な[%s]は、以下のとおりです："
+  word_arg: <テキスト>
   opts:
-    dry_run: 何もしない
+    dry_run: 実際には何も出力しない
     editor: 結果ファイルをエディターで開くコマンド（例：vi %s）
-    from: 原文の言語
+    from: ソース言語
     help: このメッセージを表示する
-    original: 翻訳されなかった元の言語の言葉
+    original: ソーステキスト
     quiet: エラーメッセージを抑止する
-    to: 訳文の言語
-    translation: 翻訳された言葉
+    to: ターゲット言語
+    translation: ターゲットテキスト
     using: 使用したい辞書の名前
-    use_cache: キャッシュした辞書を使用する
+    use_cache: キャッシュした翻訳メモリを適用する
     version: バーションを表示し終了する
     word: 文字列を翻訳する
   subcommands:
@@ -27,4 +29,5 @@ ja:
     export: .docxファイルからタグを抽出する
     import: .docxファイルにタグをインポートする
     language: 言語を設定する
+    suggest: Suggest similar words
     translate: ファイル・文字列を翻訳する

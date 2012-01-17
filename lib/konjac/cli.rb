@@ -12,7 +12,8 @@ module Konjac
 
     class << self
       # A list of valid subcommands
-      SUB_COMMANDS = ["add", "edit", "export", "import", "language", "translate"]
+      SUB_COMMANDS = ["add", "edit", "export", "import", "language", "suggest",
+        "translate"]
 
       # The banner to displaying when requesting help through the command line
       BANNER = <<-eos
@@ -21,7 +22,7 @@ module Konjac
 #{Color.bold "%s"}
 
 #{Color.bold I18n.t :usage}
-       konjac %s [#{Color.underscore I18n.t :options}] <#{I18n.t :filenames}>+%s
+       konjac %s [#{Color.underscore I18n.t :options}] %s
 #{I18n.t(:where_options) % Color.underscore(I18n.t(:options))}
 eos
 
@@ -34,6 +35,7 @@ eos
           banner BANNER % [
             I18n.t(:banner),
             "[#{Color.underscore I18n.t :subcommand}]",
+            I18n.t(:filenames_or_word_arg),
             "\n\n" + (I18n.t(:where_subcommand) % Color.underscore(I18n.t(:subcommand))) + ("\n%s\n" %
               Konjac::CLI.describe_subcommands)
           ]
@@ -47,11 +49,11 @@ eos
         # Get subcommand
         cmd = ARGV.shift
         ARGV << "-h" if ARGV.empty?
-        sc_banner = BANNER % [I18n.t(cmd, :scope => :subcommands), cmd, "\n"]
+        sc_banner = BANNER % [I18n.t(cmd, :scope => :subcommands), cmd, "%s", "\n"]
         cmd_opts = case cmd
           when "add"
             opts = Trollop::options do
-              banner sc_banner
+              banner sc_banner % I18n.t(:filenames_arg)
               opt :original, I18n.t(:original, :scope => :opts), :type => :string
               opt :translation, I18n.t(:translation, :scope => :opts), :type => :string, :short => :r
               opt :from, I18n.t(:from, :scope => :opts), :type => :string
@@ -63,14 +65,14 @@ eos
             Dictionary.add_word opts
           when "edit"
             Trollop::options do
-              banner sc_banner
+              banner sc_banner % I18n.t(:filenames_arg)
               opt :editor, I18n.t(:editor, :scope => :opts), :type => :string
               opt :help, I18n.t(:help, :scope => :opts)
             end
             Word.edit_docx_tags ARGV, opts
           when "export"
             opts = Trollop::options do
-              banner sc_banner
+              banner sc_banner % I18n.t(:filenames_arg)
               opt :from, I18n.t(:from, :scope => :opts), :type => :string
               opt :to, I18n.t(:to, :scope => :opts), :type => :string
               opt :using, I18n.t(:using, :scope => :opts), :type => :string,
@@ -80,20 +82,35 @@ eos
             Word.export_docx_tags ARGV, opts
           when "import"
             Trollop::options do
-              banner sc_banner
+              banner sc_banner % I18n.t(:filenames_arg)
               opt :help, I18n.t(:help, :scope => :opts)
             end
             Word.import_docx_tags ARGV
           when "language"
             Trollop::options do
-              banner sc_banner
+              banner sc_banner % I18n.t(:word_arg)
               opt :help, I18n.t(:help, :scope => :opts)
             end
             Config.language = ARGV[0]
             Config.save
+          when "suggest"
+            opts = Trollop::options do
+              banner sc_banner % I18n.t(:word_arg)
+              opt :from, I18n.t(:from, :scope => :opts), :type => :string
+              opt :to, I18n.t(:to, :scope => :opts), :type => :string
+              opt :using, I18n.t(:using, :scope => :opts), :type => :string,
+                :default => "dict", :multi => true
+              opt :use_cache, I18n.t(:use_cache, :scope => :opts),
+                :default => false, :short => :c
+              opt :help, I18n.t(:help, :scope => :opts)
+            end
+            results = suggest(ARGV[0].dup, opts)
+            results.each_with_index do |result, index|
+              puts "%i: %s (%i%%)" % [index + 1, result[2], result[0] * 100]
+            end
           when "translate"
             opts = Trollop::options do
-              banner sc_banner
+              banner sc_banner % I18n.t(:filenames_or_word_arg)
               opt :from, I18n.t(:from, :scope => :opts), :type => :string
               opt :to, I18n.t(:to, :scope => :opts), :type => :string
               opt :using, I18n.t(:using, :scope => :opts), :type => :string,
@@ -126,6 +143,12 @@ eos
 
       private
       
+      def suggest(word, opts = {})
+        to_lang = Language.find(opts[:to]).to_s
+        from_lang = Language.find(opts[:from]).to_s
+        Suggestor.new(from_lang, to_lang, opts).suggest word
+      end
+
       # Parse commands to determine what should be translated and how
       def translate(files, opts = {})  # :doc:
         to_lang = Language.find(opts[:to]).to_s

@@ -84,6 +84,7 @@ module Konjac
             # create a regular expression in the dictionary file.
             # Matching is case-insensitive unless the expression contains a
             # capital letter.
+            from_fuzzy = from_term
             unless from_term.is_a?(Regexp)
               from_term = Regexp.new(from_template % from_term,
                                      ("i" unless from_term =~ /[A-Z]/))
@@ -91,7 +92,7 @@ module Konjac
 
             to_term = to_template % to_term unless to_term =~ BLANK || no_space
 
-            return [ from_term, to_term ]
+            return [ from_term, to_term, from_fuzzy ]
           end
         end
 

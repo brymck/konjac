@@ -1,6 +1,7 @@
 en:
   banner: Konjac is a Ruby command-line utility for translating files using a YAML wordlist
-  filenames: filenames
+  filenames_arg: <filenames>+
+  filenames_or_word_arg: <filenames>+ OR <text>
   me: Bryan McKelvey
   options: options
   subcommand: subcommand
@@ -8,6 +9,7 @@ en:
   usage: "Usage:"
   where_options: "where [%s] are:"
   where_subcommand: "where [%s] is any one of:"
+  word_arg: <text>
   opts:
     dry_run: Don't actually do anything
     editor: A command to run to pass the file to an editor (e.g. vi %s)
@@ -27,4 +29,5 @@ en:
     export: Export text tags from a .docx file
     import: Import text tags into a .docx file
     language: Sets the default language
+    suggest: Suggest similar words using fuzzy matching
     translate: Translate a file, word or phrase
