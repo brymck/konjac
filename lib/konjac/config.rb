@@ -10,12 +10,11 @@ module Konjac
 
       # Loads the user's settings
       def load
-        @opts ||= {}
         Utils.verify_file CONFIG_PATH, "--- {}"
-        config = YAML.load_file(CONFIG_PATH)
-        config = {} unless config.is_a?(Hash)
+        @config = YAML.load_file(CONFIG_PATH)
+        @config = {} unless @config.is_a?(Hash)
 
-        set_language config[:language], (ENV["LANG"][0..1] rescue ""), :en
+        set_language @config[:language], (ENV["LANG"][0..1] rescue ""), :en
         save
       end
 
@@ -34,7 +33,7 @@ module Konjac
       # Saves the user configurations
       def save
         File.open(CONFIG_PATH, "w") do |file|
-          YAML.dump @opts, file
+          YAML.dump @config, file
         end
       end
 
@@ -55,13 +54,13 @@ module Konjac
           if !param.nil?
             lang = Language.find(param).to_sym rescue nil
             if I18n.available_locales.include?(lang)
-              @opts[:language] = I18n.locale = lang
+              @config[:language] = I18n.locale = lang
               return I18n.locale
             end
           end
         end
 
-        @opts[:language] = I18n.locale = I18n.default_locale
+        @config[:language] = I18n.locale = I18n.default_locale
       end
     end
   end
