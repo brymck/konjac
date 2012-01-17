@@ -2,7 +2,7 @@
 require File.dirname(__FILE__) + "/spec_helper"
 require "tempfile"
 
-describe Config do
+describe Konjac::Config do
   before :all do
     @config_path = File.expand_path("~/.konjac/config.yml")
     @backup_path = File.expand_path("~/.konjac/config.yml.bak")
@@ -13,6 +13,12 @@ describe Config do
   after :all do
     FileUtils.mv @backup_path, @config_path if File.exists?(@backup_path)
     ENV["LANG"] = @env_language || ""
+  end
+
+  before :each do
+    File.open(@config_path, "w") do |file|
+      file.puts "--- {}"
+    end
   end
 
   it "should default to English when no system language is found" do

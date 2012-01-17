@@ -41,15 +41,18 @@ describe Dictionary do
     end
 
     it "should correctly load a simple term" do
-      Dictionary.pairs.first.should == [/\bdogs\b/i, "犬"]
+      Dictionary.pairs.first[0].should == /\bdogs\b/i
+      Dictionary.pairs.first[1].should == "犬"
     end
 
     it "should correctly load a slightly more complex regular expression" do
-      Dictionary.pairs[1].should == [/\bcats?\b/i, "猫"]
+      Dictionary.pairs[1][0].should == /\bcats?\b/i
+      Dictionary.pairs[1][1].should == "猫"
     end
 
     it "should correctly load a manual regular expression" do
-      Dictionary.pairs[2].should == [/\.\s?/, "。"]
+      Dictionary.pairs[2][0].should == /\.\s?/
+      Dictionary.pairs[2][1].should == "。"
     end
 
     it "should ignore examples for which the source language cannot be found" do
@@ -72,7 +75,8 @@ describe Dictionary do
     end
 
     it "should add whitespace to term replacement" do
-      Dictionary.pairs.first.should == [/犬/i, "dogs "]
+      Dictionary.pairs.first[0].should == /犬/i
+      Dictionary.pairs.first[1].should == "dogs "
     end
   end
 
@@ -82,7 +86,8 @@ describe Dictionary do
     end
 
     it "should not add whitespace to term replacement" do
-      Dictionary.pairs[0].should == [/\bmouth\b/i, "boca"]
+      Dictionary.pairs[0][0].should == /\bmouth\b/i
+      Dictionary.pairs[0][1].should == "boca"
     end
   end
 
