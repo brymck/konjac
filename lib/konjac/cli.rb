@@ -23,7 +23,7 @@ module Konjac
 
 #{Color.bold I18n.t :usage}
        konjac %s [#{Color.underscore I18n.t :options}] %s
-#{I18n.t(:where_options) % Color.underscore(I18n.t(:options))}
+#{I18n.t(:where_options) % Color.underscore(I18n.t(:options))}%s
 eos
 
       # Starts the command line, parsing arguments passed via <tt>ARGV</tt> and

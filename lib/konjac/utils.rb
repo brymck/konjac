@@ -28,12 +28,18 @@ module Konjac
       end
       
       # Parses a list of files
-      def parse_files(files, ext = nil)
+      def parse_files(files, opts = {})
+        opts = { :extension => nil, :directory => nil }.merge opts
         files = [files] unless files.is_a?(Array)
         parsed_files = []
         while !files.empty?
           file = files.shift
-          file = file.sub(/\.[^\\\/]*$/, "") + ext unless ext.nil?
+          unless opts[:directory].nil?
+            file = opts[:directory] + "/" + file
+          end
+          unless opts[:extension].nil?
+            file = file.sub(/\.[^\\\/]*$/, "") + opts[:extension].to_s.tr(".", "")
+          end
           parsed_files += Dir.glob(File.expand_path(file))
         end
         parsed_files.uniq
