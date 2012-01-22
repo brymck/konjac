@@ -1,6 +1,13 @@
 #!/usr/bin/osascript
-to strip_line_breaks(line)
-  return line
+to strip_line_breaks(this_line)
+  try
+    repeat while last character of this_line is in {ASCII character 13, ASCII character 10}
+      set this_line to characters 1 thru -2 of this_line as string
+    end repeat
+    return this_line
+  on error
+    return ""
+  end try
 end strip_line_breaks
 
 to get_posix_path(mac_path)
@@ -35,9 +42,11 @@ tell application "Microsoft Word"
 
   -- iterate through paragraphs
   set paragraph_index to 1
-  repeat with current_paragraph in (get every paragraph of active_document)
-    -- set indexes
-    set text_content to my strip_line_breaks(content of text object of current_paragraph)
+  set current_paragraph to paragraph 1 in active document
+  
+  repeat
+    -- get text content if it's available
+    set text_content to my strip_line_breaks(content of text object of current_paragraph as text)
 
     if text_content is not in ignored_content then
       write ("@@ " & paragraph_index & " @@") to tags_file
@@ -46,8 +55,17 @@ tell application "Microsoft Word"
       write line_feed to tags_file
       write ("+" & text_content) to tags_file as «class utf8»
       write line_feed to tags_file
-      set paragraph_index to (paragraph_index + 1)
     end if
+
+    -- increment paragraph index
+    set paragraph_index to (paragraph_index + 1)
+
+    -- try to find the next paragraph
+    try
+      set current_paragraph to next paragraph of current_paragraph
+    on error
+      exit repeat
+    end try
   end repeat
   
   -- close everything
