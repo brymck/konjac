@@ -1,0 +1,55 @@
+#!/usr/bin/osascript
+to strip_line_breaks(line)
+  return line
+end strip_line_breaks
+
+to get_posix_path(mac_path)
+  set result to POSIX path of mac_path
+end get_posix_path
+
+tell application "Microsoft Word"
+  activate
+  set active_document to active document
+  set carriage_return to ASCII character 13
+  set line_feed to ASCII character 10
+  set ignored_content to {missing value, "", line_feed}
+  
+  -- set tags path to full path to active presentation with a .tags extension
+  set tags_path to ((path of active_document) & ".diff")
+  
+  -- delete tags file if it already exists
+  tell application "Finder"
+    if exists file tags_path then
+      delete file tags_path
+    end if
+  end tell
+  
+  -- open tags file for writing
+  set tags_file to open for access file tags_path with write permission
+  set eof of tags_file to 0
+
+  write ("---" & my get_posix_path(path of active_document)) to tags_file
+  write line_feed to tags_file
+  write ("+++" & my get_posix_path(path of active_document)) to tags_file
+  write line_feed to tags_file
+
+  -- iterate through paragraphs
+  set paragraph_index to 1
+  repeat with current_paragraph in (get every paragraph of active_document)
+    -- set indexes
+    set text_content to my strip_line_breaks(content of text object of current_paragraph)
+
+    if text_content is not in ignored_content then
+      write ("@@ " & paragraph_index & " @@") to tags_file
+      write line_feed to tags_file
+      write ("-" & text_content) to tags_file as «class utf8»
+      write line_feed to tags_file
+      write ("+" & text_content) to tags_file as «class utf8»
+      write line_feed to tags_file
+      set paragraph_index to (paragraph_index + 1)
+    end if
+  end repeat
+  
+  -- close everything
+  close access tags_file
+end tell

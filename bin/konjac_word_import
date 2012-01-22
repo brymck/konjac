@@ -1,0 +1,49 @@
+#!/usr/bin/osascript
+set numbers_as_text to {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"}
+
+-- parses the headers/separators inside the tags file
+to parse_header(header)
+  set at_offset to 4
+  
+  repeat while character at_offset of header is in my numbers_as_text
+    set at_offset to (at_offset + 1)
+  end repeat
+  
+  return at_offset
+end parse_header
+
+to get_posix_path(mac_path)
+  set result to POSIX path of mac_path
+end get_posix_path
+
+tell application "Microsoft Word"
+  activate
+  set active_document to active document
+  set carriage_return to ASCII character 13
+  set line_feed to ASCII character 10
+  set ignored_content to {missing value, "", line_feed}
+  
+  -- set tags path to full path to active presentation with a .tags extension
+  set tags_path to ((path of active_document) & ".diff")
+  
+  -- read in tags
+  set tags_file to open for access file tags_path
+  set tags to (read tags_file for (get eof tags_file) as «class utf8» using delimiter line_feed)
+  close access tags_file
+
+  -- iterate through paragraphs
+  set paragraph_index to 0
+  repeat with current_line in tags
+    if current_line starts with "@@ " then
+      set space_offset to my parse_header(current_line)
+      set paragraph_index to text 4 thru space_offset of current_line as number
+    else if current_line starts with "+" then
+      if paragraph_index is not 0 then
+        set current_content to text object of paragraph paragraph_index of active document
+        set my_range to create range active document start (start of content of current_content) end (end of content of current_content)
+        select my_range
+        type text selection text (text 2 thru (length of current_line) of current_line)
+      end if
+    end if
+  end repeat
+end tell

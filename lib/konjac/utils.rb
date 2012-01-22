@@ -38,7 +38,7 @@ module Konjac
             file = opts[:directory] + "/" + file
           end
           unless opts[:extension].nil?
-            file = file.sub(/\.[^\\\/]*$/, "") + opts[:extension].to_s.tr(".", "")
+            file = file.sub(/\.[^\\\/]*$/, "") + "." + opts[:extension].to_s.tr(".", "")
           end
           parsed_files += Dir.glob(File.expand_path(file))
         end

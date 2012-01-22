@@ -5,12 +5,14 @@ module Konjac
     # A list of the Tag objects current being managed
     attr_accessor :tags
 
-    # A regex to match lines that start with <tt>> </tt>, that is, lines that
+    # A regex to match lines that start with <tt>-</tt>, that is, lines that
     # indicate original text in .konjac files
-    STARTS_WITH_CLOSE_TAG = /^\>/
+    OLD_TAG = /^-[^-]/
+
+    NEW_TAG = /^\+[^+]/
 
     # Regex for matching index numbers
-    KONJAC_TAG = /^\[\[KJ\-(\d+)\]\]/
+    KONJAC_TAG = /^@@\s(\d+).*@@$/
 
     # Creates a new TagManager
     def initialize(path)
@@ -34,10 +36,10 @@ module Konjac
           end
 
           index = line.match(KONJAC_TAG)[1].to_i
-        elsif line =~ STARTS_WITH_CLOSE_TAG
-          orig = line[2..-1].chomp
-        else
-          trans = line.chomp
+        elsif line =~ OLD_TAG
+          orig = line[1..-1].chomp
+        elsif line =~ NEW_TAG
+          trans = line[1..-1].chomp
           unless index.nil?
             @tags << Tag.new(index, orig, trans)
             index = nil

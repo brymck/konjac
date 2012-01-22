@@ -6,7 +6,7 @@ module Konjac
       # Imports the text content of a tag file into a {Microsoft
       # Word}[http://office.microsoft.com/en-us/word/] 2003+ document
       def import_docx_tags(files)
-        sub_files = Utils.parse_files(files, ".docx")
+        sub_files = Utils.parse_files(files, :extension => :docx)
         sub_files.each do |sub_file|
           # Build the list of paths we need to work with
           dirname   = File.dirname(sub_file)
@@ -14,7 +14,7 @@ module Konjac
           orig_docx = "#{dirname}/#{basename}.docx"
           new_path  = "#{dirname}/#{basename}_imported.docx"
           xml_path  = "#{dirname}/#{basename}.xml"
-          tags_path = "#{dirname}/#{basename}.konjac"
+          tags_path = "#{dirname}/#{basename}.diff"
           out_path  = "#{dirname}/word/document.xml"
 
           # Open the original XML file and the updated tags
@@ -60,7 +60,7 @@ module Konjac
           end
         end
 
-        sub_files = Utils.parse_files(files, ".docx")
+        sub_files = Utils.parse_files(files, :extension => :docx)
         sub_files.each do |sub_file|
           # Build a list of all the paths we're working with
           dirname    = File.dirname(sub_file)
@@ -68,7 +68,7 @@ module Konjac
           orig_docx  = "#{dirname}/#{basename}.docx"
           xml_path   = "#{dirname}/#{basename}_orig.xml"
           clean_path = "#{dirname}/#{basename}.xml"
-          tags_path  = "#{dirname}/#{basename}.konjac"
+          tags_path  = "#{dirname}/#{basename}.diff"
 
           # Unzip the DOCX's word/document.xml file and pipe the output into
           # an XML with the same base name as the DOCX
@@ -98,17 +98,16 @@ module Konjac
             end
 
             # Write the tags file
-            index = 0
-
-            cleaner.xpath("//w:t").each do |node|
-              tags_file.puts "[[KJ-%i]]%s" % [index, additional_info(node)]
-              tags_file.puts "> %s" % node.content
+            tags_file.puts "---" + orig_docx
+            tags_file.puts "+++" + orig_docx
+            cleaner.xpath("//w:t").each_with_index do |node, index|
+              tags_file.puts "@@ %i @@" % [index, additional_info(node)]
+              tags_file.puts "-" + node.content
               if attempting_to_translate
-                tags_file.puts Translator.translate_content(node.content)
+                tags_file.puts "+" + Translator.translate_content(node.content)
               else
-                tags_file.puts node.content
+                tags_file.puts "+" + node.content
               end
-              index += 1
             end
           end
 

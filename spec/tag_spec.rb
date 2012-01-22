@@ -6,20 +6,22 @@ describe Tag do
   before :each do
     @tags_file = Tempfile.new(["tags", ".tags"])
     @tags_file.write <<-eos.gsub(/^\s+/, "")
-                       [[KJ-0]]
-                       > 犬
-                       dog
-                       [[KJ-1]]
-                       > 何ですか。
-                       What is it?
-                       [[KJ-2]]
-                       > 空白
-                       [[KJ-3]]  #=> comment
-                       > コメント
-                       Comment
-                       [[KJ-5]]
-                       > 以上
-                       -- end --
+                       --- /path/to/old
+                       +++ /path/to/new
+                       @@ 0 @@
+                       -犬
+                       +dog
+                       @@ 1 @@
+                       -何ですか。
+                       +What is it?
+                       @@ 2 @@
+                       -空白
+                       @@ 3 comment @@
+                       -コメント
+                       +Comment
+                       @@ 5 @@
+                       -以上
+                       +--- end --
                      eos
     @tags_file.rewind
     @manager = TagManager.new(@tags_file.path)
