@@ -29,6 +29,11 @@ describe Dictionary do
                             en: book
                             ja: 本
                         -
+                          ja:
+                            en: monkey
+                            ja: 猿
+                            case_sensitive: true
+                        -
                           en: North Carolina
                           ja: ノースカロライナ
                       eos
@@ -65,7 +70,12 @@ describe Dictionary do
 
     it "should only have a case-insensitive search if the search contains capital letters" do
       Dictionary.pairs[0][0].should == /\bdogs\b/i
-      Dictionary.pairs[3][0].should == /\bNorth Carolina\b/
+      Dictionary.pairs[4][0].should == /\bNorth Carolina\b/
+    end
+
+    it "should only force a case-insensitive search if the flag is set" do
+      Dictionary.pairs[0][0].should == /\bdogs\b/i
+      Dictionary.pairs[3][0].should == /\bmonkey\b/
     end
   end
 

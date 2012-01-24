@@ -63,8 +63,9 @@ module Konjac
           # Build to term depending on whether it's a hash for complex
           # matches or a simple string
           if term[to_lang].is_a?(Hash)
-            to_term = term[to_lang][to_lang]
-            no_space = term[to_lang]["no_space"]
+            to_term        = term[to_lang][to_lang]
+            case_sensitive = term[to_lang]["case_sensitive"]
+            no_space       = term[to_lang]["no_space"]
 
             if term[to_lang].has_key?(from_lang)
               from_term = term[to_lang][from_lang]
@@ -87,7 +88,7 @@ module Konjac
             from_fuzzy = from_term
             unless from_term.is_a?(Regexp)
               from_term = Regexp.new(from_template % from_term,
-                                     ("i" unless from_term =~ /[A-Z]/))
+                                     ("i" unless from_term =~ /[A-Z]/ || case_sensitive))
             end
 
             to_term = to_template % to_term unless to_term =~ BLANK || no_space
