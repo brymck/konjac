@@ -66,6 +66,7 @@ module Konjac
             to_term        = term[to_lang][to_lang]
             case_sensitive = term[to_lang]["case_sensitive"]
             no_space       = term[to_lang]["no_space"]
+            is_regex       = term[to_lang]["regex"]
 
             if term[to_lang].has_key?(from_lang)
               from_term = term[to_lang][from_lang]
@@ -87,8 +88,9 @@ module Konjac
             # capital letter.
             from_fuzzy = from_term
             unless from_term.is_a?(Regexp)
-              from_term = Regexp.new(from_template % from_term,
-                                     ("i" unless from_term =~ /[A-Z]/ || case_sensitive))
+              flags = (case_sensitive || (from_term =~ /[A-Z]/)) ? nil : "i"
+              from_term = Regexp.escape(from_term) unless is_regex
+              from_term = Regexp.new(from_template % from_term, flags)
             end
 
             to_term = to_template % to_term unless to_term =~ BLANK || no_space

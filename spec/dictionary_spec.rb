@@ -14,6 +14,7 @@ describe Dictionary do
                           ja:
                             ja: 猫
                             en: cats?
+                            regex: true
                         -
                           ja:
                             ja: 。
@@ -42,7 +43,7 @@ describe Dictionary do
 
   describe "when converting from English to Japanese" do
     before :each do
-      Dictionary.load "en", "ja", { :using => [@dictionary.path] }
+      Dictionary.load "en", "ja", :using => [@dictionary.path]
     end
 
     it "should correctly load a simple term" do
@@ -70,7 +71,7 @@ describe Dictionary do
 
     it "should only have a case-insensitive search if the search contains capital letters" do
       Dictionary.pairs[0][0].should == /\bdogs\b/i
-      Dictionary.pairs[4][0].should == /\bNorth Carolina\b/
+      Dictionary.pairs[4][0].should == /\bNorth\ Carolina\b/
     end
 
     it "should only force a case-insensitive search if the flag is set" do
@@ -81,7 +82,7 @@ describe Dictionary do
 
   describe "when converting from Japanese to English" do
     before :each do
-      Dictionary.load "ja", "en", { :using => [@dictionary.path] }
+      Dictionary.load "ja", "en", :using => [@dictionary.path]
     end
 
     it "should add whitespace to term replacement" do
@@ -92,7 +93,7 @@ describe Dictionary do
 
   describe "when converting from English to Spanish" do
     before :each do
-      Dictionary.load "en", "es", { :using => [@dictionary.path] }
+      Dictionary.load "en", "es", :using => [@dictionary.path]
     end
 
     it "should not add whitespace to term replacement" do
