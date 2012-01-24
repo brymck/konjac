@@ -40,7 +40,11 @@ describe CLI do
       CLI.start
       converted_path = Utils.build_converted_file_name(@english.path, "en", "ja")
       File.read(@english.path).should == "I like dogs."
-      File.read(converted_path).should == "I like 犬.\n"
+      File.open(converted_path, "r") do |file|
+        file.each do |line|
+          line.chomp.should == "I like 犬."
+        end
+      end
     end
   end
 end

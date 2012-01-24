@@ -1,7 +1,7 @@
 #!/usr/bin/osascript
 to strip_line_breaks(this_line)
   try
-    repeat while last character of this_line is in {ASCII character 13, ASCII character 10}
+    repeat while last character of this_line is in {ASCII character 13, ASCII character 10, ASCII character 7}
       set this_line to characters 1 thru -2 of this_line as string
     end repeat
     return this_line

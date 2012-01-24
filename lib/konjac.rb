@@ -4,6 +4,7 @@ autoload :Amatch,    "amatch"
 autoload :FileUtils, "fileutils"
 autoload :I18n,      "i18n"
 autoload :Nokogiri,  "nokogiri"
+autoload :Tempfile,  "tempfile"
 
 # Konjac is a Ruby command-line utility for translating files using a YAML
 # wordlist

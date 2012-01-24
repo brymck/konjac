@@ -2,6 +2,7 @@
 module Konjac
   # A class consisting of functions for translation
   module Translator
+    DIFF_ADD = /^\+(?!\+\+ )/
     class << self
       # Translates a file or list of files
       #
@@ -11,14 +12,21 @@ module Konjac
         load_dictionary from_lang, to_lang, opts
         
         files.each do |source|
-          # Read in file and replace matches in content
-          content = File.read(source)
-          content = translate_content(content)
+          # Handle .diff files differently (har har)
+          is_diff = (File.extname(source) == ".diff")
 
-          # Write changed content to file
-          File.open(Utils.build_converted_file_name(source, from_lang, to_lang), "w") do |file|
-            file.puts content
+          temp_file = Tempfile.new("konjac")
+          File.open(source, "r") do |file|
+            file.each_line do |line|
+              if is_diff && line !~ DIFF_ADD
+                temp_file.puts line
+              else
+                temp_file.puts translate_content(line)
+              end
+            end
           end
+          target = Utils.build_converted_file_name(source, from_lang, to_lang)
+          FileUtils.mv temp_file.path, target
         end
       end
 
