@@ -82,7 +82,8 @@ translate as 犬:
       en: dog
       ja:
         ja: 犬
-        en: dogs?  # i.e. the regular expression /dogs?/
+        en: dogs?
+        regex: true  # i.e. the regular expression /dogs?/
 
 == Extended Example
 
@@ -101,6 +102,7 @@ translate as 犬:
       ja:
         ja: 犬
         en: dogs?
+        regex: true  # i.e. the regular expression /dogs?/
     - # Periods
       en:
         en: ". "

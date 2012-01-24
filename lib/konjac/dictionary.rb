@@ -77,7 +77,11 @@ module Konjac
 
           # Build from term if it doesn't already exist
           if term.has_key?(from_lang) && from_term.nil?
-            from_term = term[from_lang]
+            if term[from_lang].is_a?(Hash)
+              from_term = term[from_lang][from_lang]
+            else
+              from_term = term[from_lang]
+            end
           end
 
           unless from_term.nil?
