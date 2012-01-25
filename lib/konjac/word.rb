@@ -5,51 +5,58 @@ module Konjac
     class << self
       # Imports the text content of a tag file into a {Microsoft
       # Word}[http://office.microsoft.com/en-us/word/] 2003+ document
-      def import_docx_tags(files)
-        sub_files = Utils.parse_files(files, :extension => :docx)
+      def import_tags(files)
+        sub_files = Utils.parse_files(files)
         sub_files.each do |sub_file|
-          # Build the list of paths we need to work with
-          dirname   = File.dirname(sub_file)
-          basename  = File.basename(sub_file, ".*")
-          orig_docx = "#{dirname}/#{basename}.docx"
-          new_path  = "#{dirname}/#{basename}_imported.docx"
-          xml_path  = "#{dirname}/#{basename}.xml"
-          tags_path = "#{dirname}/#{basename}.diff"
-          out_path  = "#{dirname}/word/document.xml"
+          case File.extname(sub_file)
+          when ".doc"
+            system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_import"), sub_file
+          when ".docx"
+            # Build the list of paths we need to work with
+            dirname   = File.dirname(sub_file)
+            basename  = File.basename(sub_file, ".*")
+            orig_docx = "#{dirname}/#{basename}.docx"
+            new_path  = "#{dirname}/#{basename}_imported.docx"
+            xml_path  = "#{dirname}/#{basename}.xml"
+            tags_path = "#{dirname}/#{basename}.diff"
+            out_path  = "#{dirname}/word/document.xml"
 
-          # Open the original XML file and the updated tags
-          writer = Nokogiri::XML(File.read(xml_path))
-          nodes  = writer.xpath("//w:t")
-          tags   = TagManager.new(tags_path)
+            # Open the original XML file and the updated tags
+            writer = Nokogiri::XML(File.read(xml_path))
+            nodes  = writer.xpath("//w:t")
+            tags   = TagManager.new(tags_path)
 
-          # Overwrite each <w:t> tag's content with the new tag
-          tags.all.each do |tag|
-            if tag.translated?
-              nodes[tag.index].content = tag.translated
+            # Overwrite each <w:t> tag's content with the new tag
+            tags.all.each do |tag|
+              if tag.translated?
+                nodes[tag.index].content = tag.translated
+              end
             end
+
+            # Create a directory for word/document.xml if necessary
+            unless File.directory?("#{dirname}/word")
+              FileUtils.mkdir "#{dirname}/word"
+            end
+
+            # Write the modified XML to a file
+            File.open(out_path, "w") do |file|
+              file.write writer.to_xml.gsub(/\n\s*/, "").sub(/\?></, "?>\n<")
+            end
+
+            # Copy the original file
+            FileUtils.cp orig_docx, new_path
+
+            # Add the new document XML to the copied file
+            system "cd #{dirname} && zip -q #{new_path} word/document.xml"
+          else
+            puts I18n.t(:unknown) % sub_file
           end
-
-          # Create a directory for word/document.xml if necessary
-          unless File.directory?("#{dirname}/word")
-            FileUtils.mkdir "#{dirname}/word"
-          end
-
-          # Write the modified XML to a file
-          File.open(out_path, "w") do |file|
-            file.write writer.to_xml.gsub(/\n\s*/, "").sub(/\?></, "?>\n<")
-          end
-
-          # Copy the original file
-          FileUtils.cp orig_docx, new_path
-
-          # Add the new document XML to the copied file
-          system "cd #{dirname} && zip -q #{new_path} word/document.xml"
         end
       end
 
       # Exports the text content of {Microsoft
-      # Word}[http://office.microsoft.com/en-us/word/] 2003+ document
-      def export_docx_tags(files, opts = {})
+      # Word}[http://office.microsoft.com/en-us/word/] documents
+      def export_tags(files, opts = {})
         # Determine whether to attempt translating
         if opts[:from_given] && opts[:to_given]
           from_lang = Language.find(opts[:from])
@@ -60,60 +67,67 @@ module Konjac
           end
         end
 
-        sub_files = Utils.parse_files(files, :extension => :docx)
+        sub_files = Utils.parse_files(files)
         sub_files.each do |sub_file|
-          # Build a list of all the paths we're working with
-          dirname    = File.dirname(sub_file)
-          basename   = File.basename(sub_file, ".*")
-          orig_docx  = "#{dirname}/#{basename}.docx"
-          xml_path   = "#{dirname}/#{basename}_orig.xml"
-          clean_path = "#{dirname}/#{basename}.xml"
-          tags_path  = "#{dirname}/#{basename}.diff"
+          case File.extname(sub_file)
+          when ".doc"
+            system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_export"), sub_file
+          when ".docx"
+            # Build a list of all the paths we're working with
+            dirname    = File.dirname(sub_file)
+            basename   = File.basename(sub_file, ".*")
+            orig_docx  = "#{dirname}/#{basename}.docx"
+            xml_path   = "#{dirname}/#{basename}_orig.xml"
+            clean_path = "#{dirname}/#{basename}.xml"
+            tags_path  = "#{dirname}/#{basename}.diff"
 
-          # Unzip the DOCX's word/document.xml file and pipe the output into
-          # an XML with the same base name as the DOCX
-          system "unzip -p #{orig_docx} word/document.xml > #{xml_path}"
+            # Unzip the DOCX's word/document.xml file and pipe the output into
+            # an XML with the same base name as the DOCX
+            system "unzip -p #{orig_docx} word/document.xml > #{xml_path}"
 
-          # Read in the XML file and extract the content from each <w:t> tag
-          cleaner = Nokogiri::XML(File.read(xml_path))
-          File.open(tags_path, "w") do |tags_file|
-            # Remove all grammar and spellcheck tags
-            cleaner.xpath("//w:proofErr").remove
+            # Read in the XML file and extract the content from each <w:t> tag
+            cleaner = Nokogiri::XML(File.read(xml_path))
+            File.open(tags_path, "w") do |tags_file|
+              # Remove all grammar and spellcheck tags
+              cleaner.xpath("//w:proofErr").remove
 
-            nodes = cleaner.xpath("//w:r")
-            prev = nil
-            nodes.each do |node|
-              unless prev.nil?
-                if (prev.next_sibling == node) && compare_nodes(prev, node)
-                  begin
-                    node.at_xpath("w:t").content = prev.at_xpath("w:t").content +
-                      node.at_xpath("w:t").content
-                    prev.remove
-                  rescue
+              nodes = cleaner.xpath("//w:r")
+              prev = nil
+              nodes.each do |node|
+                unless prev.nil?
+                  if (prev.next_sibling == node) && compare_nodes(prev, node)
+                    begin
+                      node.at_xpath("w:t").content = prev.at_xpath("w:t").content +
+                        node.at_xpath("w:t").content
+                      prev.remove
+                    rescue
+                    end
                   end
                 end
+                
+                prev = node
               end
-              
-              prev = node
+
+              # Write the tags file
+              tags_file.puts "---" + orig_docx
+              tags_file.puts "+++" + orig_docx
+              cleaner.xpath("//w:t").each_with_index do |node, index|
+                tags_file.puts "@@ %i @@" % [index, additional_info(node)]
+                tags_file.puts "-" + node.content
+                if attempting_to_translate
+                  tags_file.puts "+" + Translator.translate_content(node.content)
+                else
+                  tags_file.puts "+" + node.content
+                end
+              end
             end
 
-            # Write the tags file
-            tags_file.puts "---" + orig_docx
-            tags_file.puts "+++" + orig_docx
-            cleaner.xpath("//w:t").each_with_index do |node, index|
-              tags_file.puts "@@ %i @@" % [index, additional_info(node)]
-              tags_file.puts "-" + node.content
-              if attempting_to_translate
-                tags_file.puts "+" + Translator.translate_content(node.content)
-              else
-                tags_file.puts "+" + node.content
-              end
+            # Write the cleaned-up XML to a file for inspection
+            File.open(clean_path, "w") do |xml|
+              xml.puts cleaner.to_xml
             end
-          end
-
-          # Write the cleaned-up XML to a file for inspection
-          File.open(clean_path, "w") do |xml|
-            xml.puts cleaner.to_xml
+          else
+            puts I18n.t(:unknown) % sub_file
           end
         end
       end

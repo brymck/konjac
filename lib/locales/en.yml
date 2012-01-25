@@ -4,6 +4,7 @@ en:
   filenames_or_word_arg: <filenames>+ OR <text>
   me: Bryan McKelvey
   options: options
+  overwrite: "Overwrite %s? (y/n [n]) "
   subcommand: subcommand
   unknown_subcommand: "Unknown subcommand: %s"
   usage: "Usage:"
@@ -13,9 +14,12 @@ en:
   opts:
     dry_run: Don't actually do anything
     editor: A command to run to pass the file to an editor (e.g. vi %s)
+    force: Automatically overwrite files
     from: The language from which to translate
     help: Show this message
     original: The untranslated original text
+    output: The name of the output file
+    prompt: Prompt before overwriting a file
     quiet: Suppress error messages
     to: The language into which to translate
     translation: The translated text

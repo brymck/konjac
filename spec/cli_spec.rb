@@ -31,16 +31,17 @@ describe CLI do
       @english.write "I like dogs."
       @english.rewind
 
+      @converted = Utils.build_converted_file_name(@english.path, "en", "ja")
+
       # Set ARGV
       set_argv "translate", "-t", "japanese", "-u", @dictionary.path,
-        @english.path
+        @english.path, "-y", "-o", @converted
     end
 
     it "should correctly translate English text" do
       CLI.start
-      converted_path = Utils.build_converted_file_name(@english.path, "en", "ja")
       File.read(@english.path).should == "I like dogs."
-      File.open(converted_path, "r") do |file|
+      File.open(@converted, "r") do |file|
         file.each do |line|
           line.chomp.should == "I like 犬."
         end

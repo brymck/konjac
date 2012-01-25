@@ -25,8 +25,17 @@ module Konjac
               end
             end
           end
-          target = Utils.build_converted_file_name(source, from_lang, to_lang)
-          FileUtils.mv temp_file.path, target
+
+          # Set output file
+          if opts[:output].nil?
+            target = source
+          else
+            target = File.expand_path(opts[:output])
+          end
+
+          if Utils.user_allows_overwrite?(target, opts)
+            FileUtils.mv temp_file.path, target
+          end
         end
       end
 

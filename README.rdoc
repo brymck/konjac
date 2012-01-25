@@ -39,20 +39,23 @@ Use multiple dictionaries:
     konjac translate financial_report_en.txt --to japanese --using {finance,fluffery}
     konjac translate financial_report_en.txt -t ja -u {finance,fluffery}
 
-Extract text from a .docx document (creates a plain-text <tt>test.konjac</tt> file from
-<tt>test.docx</tt>):
+Extract text from a .docx? document (creates a plain-text <tt>test.konjac</tt>
+file from <tt>test.docx</tt>):
 
-    konjac export test
+    konjac export test.doc
+    konjac export test.docx
 
 Extract text from a .docx document and process with a dictionary
 
     konjac export test.docx --from japanese --to english --using pre
     konjac export test.docx -f ja -t en -u pre
 
-Import tags file back into .docx document (file created is named
+Import tags file back into .docx document (for .doc files, this opens the file
+in word and imports the changes; for .docx files this outputs a new file named
 <tt>test_imported.docx</tt>):
 
-    konjac import test
+    konjac import test.doc
+    konjac import test.docx
 
 Add a word to your dictionary:
 
@@ -63,6 +66,11 @@ Translate a word using your dictionary:
 
     konjac translate dog --from english --to japanese --word
     konjac translate dog -f en -t ja -w
+
+Suggest a word using your dictionary:
+
+    konjac suggest dog --from english --to japanese
+    konjac suggest dog -f en -t ja
 
 == Dictionary Format
 

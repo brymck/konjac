@@ -14,6 +14,20 @@ module Konjac
         end
       end
 
+      # Prompts user whether to overwrite the specified file. Passing
+      # <tt>:force => true</tt> after the filename will cause this message to
+      # be ignored and always return +true+
+      def user_allows_overwrite?(file, opts = {})
+        if File.exist?(File.expand_path(file)) && !opts[:force]
+          print I18n.t(:overwrite) % file
+          answer = HighLine::SystemExtensions.get_character.chr
+          puts answer
+          return answer =~ /^y/i
+        else
+          return true
+        end
+      end
+
       # Build converted file name by appending "_converted" to the file name
       def build_converted_file_name(source, from_lang, to_lang)
         # Get components of filename

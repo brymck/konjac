@@ -75,6 +75,7 @@ eos
               banner sc_banner % I18n.t(:filenames_arg)
               opt :from, I18n.t(:from, :scope => :opts), :type => :string
               opt :to, I18n.t(:to, :scope => :opts), :type => :string
+              opt :output, I18n.t(:output, :scope => :opts), :type => :string
               opt :using, I18n.t(:using, :scope => :opts), :type => :string,
                 :default => "dict", :multi => true
               opt :help, I18n.t(:help, :scope => :opts)
@@ -82,14 +83,19 @@ eos
             if ARGV == ["doc"]
               system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_export")
             else
-              Word.export_docx_tags ARGV, opts
+              Word.export_tags ARGV, opts
             end
           when "import"
-            Trollop::options do
+            opts = Trollop::options do
               banner sc_banner % I18n.t(:filenames_arg)
+              opt :output, I18n.t(:output, :scope => :opts), :type => :string
               opt :help, I18n.t(:help, :scope => :opts)
             end
-            Word.import_docx_tags ARGV
+            if ARGV == ["doc"]
+              system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_import")
+            else
+              Word.import_tags ARGV, opts
+            end
           when "language"
             Trollop::options do
               banner sc_banner % I18n.t(:word_arg)
@@ -117,6 +123,9 @@ eos
               banner sc_banner % I18n.t(:filenames_or_word_arg)
               opt :from, I18n.t(:from, :scope => :opts), :type => :string
               opt :to, I18n.t(:to, :scope => :opts), :type => :string
+              opt :output, I18n.t(:output, :scope => :opts), :type => :string
+              opt :force, I18n.t(:force, :scope => :opts), :default => false,
+                :short => :y
               opt :using, I18n.t(:using, :scope => :opts), :type => :string,
                 :default => "dict", :multi => true
               opt :use_cache, I18n.t(:use_cache, :scope => :opts),
