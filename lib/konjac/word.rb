@@ -5,7 +5,7 @@ module Konjac
     class << self
       # Imports the text content of a tag file into a {Microsoft
       # Word}[http://office.microsoft.com/en-us/word/] 2003+ document
-      def import_tags(files)
+      def import_tags(files, opts = {})
         sub_files = Utils.parse_files(files)
         sub_files.each do |sub_file|
           case File.extname(sub_file)

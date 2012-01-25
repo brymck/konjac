@@ -55,7 +55,7 @@ to import(filename)
           set prev_paragraph_index to paragraph_index
 
           -- handle blank lines with soft returns
-          if current_line is "+"
+          if length of current_line is less than 2
             set this_content to ""
           else
             set this_content to text 2 thru (length of current_line) ¬
