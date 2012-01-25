@@ -45,7 +45,7 @@ module Konjac
       # locale (<tt>I18n.locale</tt>), the default locale
       # (<tt>I18n.default_locale</tt>), etc.
       def set_language(*params)
-        I18n.load_path = Dir[File.join(File.dirname(__FILE__), "..", "..", "locales", "*.yml")]
+        I18n.load_path = Dir[File.join(File.dirname(__FILE__), "..", "locales", "*.yml")]
         I18n.default_locale = :en
 
         # Check each parameter to see whether it matches with an available

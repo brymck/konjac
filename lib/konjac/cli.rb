@@ -79,7 +79,11 @@ eos
                 :default => "dict", :multi => true
               opt :help, I18n.t(:help, :scope => :opts)
             end
-            Word.export_docx_tags ARGV, opts
+            if ARGV == ["doc"]
+              system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_export")
+            else
+              Word.export_docx_tags ARGV, opts
+            end
           when "import"
             Trollop::options do
               banner sc_banner % I18n.t(:filenames_arg)
