@@ -15,6 +15,11 @@ module Konjac
       SUB_COMMANDS = ["add", "edit", "export", "import", "language", "list",
         "suggest", "translate", "use"]
 
+      # The minimum amount by which to offset subcommands in standard display.
+      # Should be equal to the length of the longest top-level flag (e.g. the
+      # +version+ in opt :version) plus 6
+      SC_MIN_OFFSET = 13  # :nodoc:
+
       # The banner to displaying when requesting help through the command line
       BANNER = <<-eos
 #{Color.bold { Color.underscore { "KONJAC" } }}
@@ -155,7 +160,7 @@ eos
       # Describe the subcommands available to the command line interface
       def describe_subcommands
         text = []
-        leftcol_width = SUB_COMMANDS.map(&:length).max
+        leftcol_width = [SUB_COMMANDS.map(&:length).max, SC_MIN_OFFSET].max
         SUB_COMMANDS.each do |sc|
           text << "  %#{leftcol_width}s:   %s" % [sc, I18n.t(sc, :scope => :subcommands)]
         end
@@ -164,6 +169,8 @@ eos
 
       private
       
+      # Suggests a translation based on the provided word and the supplied
+      # optional arguments
       def suggest(word, opts = {})
         to_lang = Language.find(opts[:to]).to_s
         from_lang = Language.find(opts[:from]).to_s

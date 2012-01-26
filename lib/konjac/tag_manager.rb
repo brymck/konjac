@@ -6,9 +6,11 @@ module Konjac
     attr_accessor :tags
 
     # A regex to match lines that start with <tt>-</tt>, that is, lines that
-    # indicate original text in .konjac files
+    # indicate removed text in .diff files
     OLD_TAG = /^-[^-]/
 
+    # A regex to match lines that start with <tt>+</tt>, that is, lines that
+    # indicate added text in .diff files
     NEW_TAG = /^\+[^+]/
 
     # Regex for matching index numbers

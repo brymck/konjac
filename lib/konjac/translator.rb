@@ -2,7 +2,10 @@
 module Konjac
   # A class consisting of functions for translation
   module Translator
+    # A regex to identify whether the specific line in a diff file is an add
+    # line
     DIFF_ADD = /^\+(?!\+\+ )/
+
     class << self
       # Translates a file or list of files
       #
