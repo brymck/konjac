@@ -36,8 +36,8 @@ module Konjac
         end
         
         # Build a regex template for the from language
-        from_template = build_regex_template(from_lang)
-        to_template   = build_replacement_template(from_lang, to_lang)
+        has_spaces  = Language.has_spaces?(from_lang)
+        to_template = build_replacement_template(from_lang, to_lang)
 
         # Save variables to cache so we can avoid repetitive requests
         cache_load from_lang, to_lang, opts[:using]
@@ -48,7 +48,7 @@ module Konjac
         # Build a list of search and replace pairs
         @pairs = []
         dictionary.each do |term|
-          pair = extract_pair_from_term(term, from_lang, to_lang, from_template, to_template)
+          pair = extract_pair_from_term(term, from_lang, to_lang, has_spaces, to_template)
           @pairs << pair unless pair.nil?
         end
 
@@ -58,7 +58,7 @@ module Konjac
 
       # Extracts a regular expression and string replacement pair from a term
       # in the Dictionary, based on the supplied languages and their templates
-      def extract_pair_from_term(term, from_lang, to_lang, from_template, to_template)
+      def extract_pair_from_term(term, from_lang, to_lang, has_spaces, to_template)
         if term.has_key?(to_lang)
           # Build to term depending on whether it's a hash for complex
           # matches or a simple string
@@ -94,7 +94,11 @@ module Konjac
             unless from_term.is_a?(Regexp)
               flags = (case_sensitive || (from_term =~ /[A-Z]/)) ? nil : "i"
               from_term = Regexp.escape(from_term) unless is_regex
-              from_term = Regexp.new(from_template % from_term, flags)
+              if has_spaces
+                from_term = Regexp.new(add_word_boundaries(from_term), flags)
+              else
+                from_term = Regexp.new(from_term, flags)
+              end
             end
 
             to_term = to_template % to_term unless to_term =~ BLANK || no_space
@@ -125,16 +129,6 @@ module Konjac
         (@to_lang      == to_lang     ) &&
         (@dictionaries == dictionaries) &&
         !@pairs.nil?
-      end
-
-      # Builds a regular expression template for the language depending on
-      # whether that language has word boundaries
-      def build_regex_template(lang)
-        if Language.has_spaces?(lang)
-          "\\b%s\\b"
-        else
-          "%s"
-        end
       end
 
       # Builds a replacement template for the to language, depending on whether
@@ -195,6 +189,19 @@ module Konjac
       end
 
       private
+
+      # Adds word boundaries to a term based on whether the first and last
+      # letter would support them in a regular expression
+      def add_word_boundaries(term)
+        result = ""
+
+        # First letter is a word character
+        result << "\\b" if term[0] =~ /\w/
+        result << term
+
+        # Either last letter is a word character or it's not escaped
+        result << "\\b" if term[0..1] =~ /\w$|[^\\].$/
+      end
 
       # Caches variables so we can determine later on whether to reload the
       # dictionaries or not
