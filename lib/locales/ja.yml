@@ -34,7 +34,7 @@ ja:
     export: .docまたは.docxファイルからタグを抽出する
     import: .docまたは.docxファイルにタグをインポートする
     language: 言語を設定する
-    list: List available dictionaries
+    list: 使用できる辞書を表示する
     suggest: ファジーマッチングで似た言葉をサジェストする
     translate: ファイル・文字列を翻訳する
-    use: Choose a default dictionary
+    use: デフォルト辞書を選択する
