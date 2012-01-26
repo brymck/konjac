@@ -3,6 +3,7 @@ en:
   filenames_arg: <filenames>+
   filenames_or_word_arg: <filenames>+ OR <text>
   me: Bryan McKelvey
+  no_match: "No files matching \"%s\" found!"
   options: options
   overwrite: "Overwrite %s? (y/n [n]) "
   subcommand: subcommand
@@ -29,9 +30,11 @@ en:
     word: Translate a word or phrase
   subcommands:
     add: Add a definition to translation memory
-    edit: Edit the tags file for a .docx file
-    export: Export text tags from a .docx file
-    import: Import text tags into a .docx file
+    edit: Edit the tags file for a .doc or .docx file
+    export: Export text tags from a .doc or .docx file
+    import: Import text tags into a .doc or .docx file
     language: Sets the default language
+    list: List available dictionaries
     suggest: Suggest similar words using fuzzy matching
     translate: Translate a file, word or phrase
+    use: Choose a default dictionary

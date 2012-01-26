@@ -18,6 +18,38 @@ module Konjac
         save
       end
 
+      # Lists the dictionaries available in <tt>~/.konjac/*.yml</tt>
+      def list
+        lines = []
+        current_found = false
+        Dir[File.expand_path("~/.konjac/*.yml")].each do |dict|
+          name = File.basename(dict, ".*")
+          unless name == "config"
+            current_found = true
+            lines << "%s %s" % [current?(name) ? "***" : "   ", name]
+          end
+        end
+        lines << "*** %s" % dictionary unless current_found
+        lines
+      end
+
+      # The current dictionary
+      def dictionary
+        @config[:dict] || "dict"
+      end
+
+      # Determines whether the specified name of a dictionary is the one
+      # currently set as the default
+      def current?(dict)
+        dict == dictionary
+      end
+
+      # Specifies the name of the dictionary to use
+      def use(dict)
+        @config[:dict] = dict.to_s unless dict.to_s == "config"
+        save
+      end
+
       # The current interface language
       def language
         I18n.locale

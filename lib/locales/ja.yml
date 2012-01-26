@@ -3,6 +3,7 @@ ja:
   filenames_arg: <ファイル名>+
   filenames_or_word_arg: <ファイル名>+ または <テキスト>
   me: ブライアン・マッケルビー
+  no_match: "「%s」をマッチするファイルは存在しません。"
   options: オプション
   overwrite: "%sを上書きしますか。 (y/n [n]) "
   subcommand: サブコマンド
@@ -29,9 +30,11 @@ ja:
     word: 文字列を翻訳する
   subcommands:
     add: 翻訳メモリに定義を追加する
-    edit: .docxファイルに当たるタグファイルを編集する
-    export: .docxファイルからタグを抽出する
-    import: .docxファイルにタグをインポートする
+    edit: .docまたは.docxファイルに当たるタグファイルを編集する
+    export: .docまたは.docxファイルからタグを抽出する
+    import: .docまたは.docxファイルにタグをインポートする
     language: 言語を設定する
-    suggest: Suggest similar words
+    list: List available dictionaries
+    suggest: ファジーマッチングで似た言葉をサジェストする
     translate: ファイル・文字列を翻訳する
+    use: Choose a default dictionary

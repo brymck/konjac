@@ -7,6 +7,7 @@ module Konjac
       # Word}[http://office.microsoft.com/en-us/word/] 2003+ document
       def import_tags(files, opts = {})
         sub_files = Utils.parse_files(files)
+        return if sub_files.empty?
         sub_files.each do |sub_file|
           case File.extname(sub_file)
           when ".doc"
@@ -68,6 +69,7 @@ module Konjac
         end
 
         sub_files = Utils.parse_files(files)
+        return if sub_files.empty?
         sub_files.each do |sub_file|
           case File.extname(sub_file)
           when ".doc"

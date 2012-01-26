@@ -12,8 +12,8 @@ module Konjac
 
     class << self
       # A list of valid subcommands
-      SUB_COMMANDS = ["add", "edit", "export", "import", "language", "suggest",
-        "translate"]
+      SUB_COMMANDS = ["add", "edit", "export", "import", "language", "list",
+        "suggest", "translate", "use"]
 
       # The banner to displaying when requesting help through the command line
       BANNER = <<-eos
@@ -48,7 +48,7 @@ eos
 
         # Get subcommand
         cmd = ARGV.shift
-        ARGV << "-h" if ARGV.empty?
+        ARGV << "-h" if ARGV.empty? && cmd != "list"
         sc_banner = BANNER % [I18n.t(cmd, :scope => :subcommands), cmd, "%s", "\n"]
         cmd_opts = case cmd
           when "add"
@@ -59,7 +59,7 @@ eos
               opt :from, I18n.t(:from, :scope => :opts), :type => :string
               opt :to, I18n.t(:to, :scope => :opts), :type => :string
               opt :using, I18n.t(:using, :scope => :opts), :type => :string,
-                :default => "dict", :multi => true
+                :default => Config.dictionary, :multi => true
               opt :help, I18n.t(:help, :scope => :opts)
             end
             Dictionary.add_word opts
@@ -79,25 +79,17 @@ eos
               opt :force, I18n.t(:force, :scope => :opts), :default => false,
                 :short => :y
               opt :using, I18n.t(:using, :scope => :opts), :type => :string,
-                :default => "dict", :multi => true
+                :default => Config.dictionary, :multi => true
               opt :help, I18n.t(:help, :scope => :opts)
             end
-            if ARGV == ["doc"]
-              system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_export")
-            else
-              Word.export_tags ARGV, opts
-            end
+            Word.export_tags ARGV, opts
           when "import"
             opts = Trollop::options do
               banner sc_banner % I18n.t(:filenames_arg)
               opt :output, I18n.t(:output, :scope => :opts), :type => :string
               opt :help, I18n.t(:help, :scope => :opts)
             end
-            if ARGV == ["doc"]
-              system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_import")
-            else
-              Word.import_tags ARGV, opts
-            end
+            Word.import_tags ARGV, opts
           when "language"
             Trollop::options do
               banner sc_banner % I18n.t(:word_arg)
@@ -105,13 +97,21 @@ eos
             end
             Config.language = ARGV[0]
             Config.save
+          when "list"
+            Trollop::options do
+              banner sc_banner % I18n.t(:word_arg)
+              opt :help, I18n.t(:help, :scope => :opts)
+            end
+            Config.list.each do |line|
+              puts line
+            end
           when "suggest"
             opts = Trollop::options do
               banner sc_banner % I18n.t(:word_arg)
               opt :from, I18n.t(:from, :scope => :opts), :type => :string
               opt :to, I18n.t(:to, :scope => :opts), :type => :string
               opt :using, I18n.t(:using, :scope => :opts), :type => :string,
-                :default => "dict", :multi => true
+                :default => Config.dictionary, :multi => true
               opt :use_cache, I18n.t(:use_cache, :scope => :opts),
                 :default => false, :short => :c
               opt :help, I18n.t(:help, :scope => :opts)
@@ -129,7 +129,7 @@ eos
               opt :force, I18n.t(:force, :scope => :opts), :default => false,
                 :short => :y
               opt :using, I18n.t(:using, :scope => :opts), :type => :string,
-                :default => "dict", :multi => true
+                :default => Config.dictionary, :multi => true
               opt :use_cache, I18n.t(:use_cache, :scope => :opts),
                 :default => false, :short => :c
               opt :word, I18n.t(:word, :scope => :opts), :default => false
@@ -137,6 +137,12 @@ eos
             end
             result = translate(ARGV, opts)
             puts result if opts[:word]
+          when "use"
+            Trollop::options do
+              banner sc_banner % I18n.t(:word_arg)
+              opt :help, I18n.t(:help, :scope => :opts)
+            end
+            Config.use ARGV[0]
           else
             if global_opts[:quiet]
               raise SystemExit

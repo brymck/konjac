@@ -45,6 +45,7 @@ module Konjac
       def parse_files(files, opts = {})
         opts = { :extension => nil, :directory => nil }.merge opts
         files = [files] unless files.is_a?(Array)
+        search_text = files.join(" ")
         parsed_files = []
         while !files.empty?
           file = files.shift
@@ -56,6 +57,7 @@ module Konjac
           end
           parsed_files += Dir.glob(File.expand_path(file))
         end
+        puts I18n.t(:no_match) % search_text if parsed_files.empty?
         parsed_files.uniq
       end
 
