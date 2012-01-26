@@ -201,6 +201,7 @@ module Konjac
 
         # Either last letter is a word character or it's not escaped
         result << "\\b" if term[0..1] =~ /\w$|[^\\].$/
+        result
       end
 
       # Caches variables so we can determine later on whether to reload the
