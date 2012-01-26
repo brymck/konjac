@@ -51,7 +51,7 @@ to extract(filename)
 
     -- iterate through paragraphs
     set paragraph_index to 1
-    set current_paragraph to paragraph 1 in active document
+    set current_paragraph to paragraph 1 in active_document
 
     -- save old delimiters
     

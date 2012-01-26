@@ -18,7 +18,7 @@ module Konjac
             orig_docx = "#{dirname}/#{basename}.docx"
             new_path  = "#{dirname}/#{basename}_imported.docx"
             xml_path  = "#{dirname}/#{basename}.xml"
-            tags_path = "#{dirname}/#{basename}.diff"
+            tags_path = "#{dirname}/#{basename}.docx.diff"
             out_path  = "#{dirname}/word/document.xml"
 
             # Open the original XML file and the updated tags
@@ -71,6 +71,8 @@ module Konjac
         sub_files.each do |sub_file|
           case File.extname(sub_file)
           when ".doc"
+            break unless Utils.user_allows_overwrite?(sub_file + ".diff")
+
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_export"), sub_file
           when ".docx"
             # Build a list of all the paths we're working with
@@ -79,7 +81,9 @@ module Konjac
             orig_docx  = "#{dirname}/#{basename}.docx"
             xml_path   = "#{dirname}/#{basename}_orig.xml"
             clean_path = "#{dirname}/#{basename}.xml"
-            tags_path  = "#{dirname}/#{basename}.diff"
+            tags_path  = "#{dirname}/#{basename}.docx.diff"
+
+            break unless Utils.user_allows_overwrite?(tags_path)
 
             # Unzip the DOCX's word/document.xml file and pipe the output into
             # an XML with the same base name as the DOCX

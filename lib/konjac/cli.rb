@@ -76,6 +76,8 @@ eos
               opt :from, I18n.t(:from, :scope => :opts), :type => :string
               opt :to, I18n.t(:to, :scope => :opts), :type => :string
               opt :output, I18n.t(:output, :scope => :opts), :type => :string
+              opt :force, I18n.t(:force, :scope => :opts), :default => false,
+                :short => :y
               opt :using, I18n.t(:using, :scope => :opts), :type => :string,
                 :default => "dict", :multi => true
               opt :help, I18n.t(:help, :scope => :opts)
