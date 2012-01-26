@@ -4,7 +4,7 @@ ja:
   filenames_or_word_arg: <ファイル名>+ または <テキスト>
   me: ブライアン・マッケルビー
   options: オプション
-  overwrite: "%sを上書しますか。 (y/n [n]) "
+  overwrite: "%sを上書きしますか。 (y/n [n]) "
   subcommand: サブコマンド
   unknown_subcommand: 不明なサブコマンド：%s
   usage: 使い方：
@@ -14,7 +14,7 @@ ja:
   opts:
     dry_run: 実際には何も出力しない
     editor: 結果ファイルをエディターで開くコマンド（例：vi %s）
-    force: 自動にファイルを上書する
+    force: 自動にファイルを上書きする
     from: ソース言語
     help: このメッセージを表示する
     original: ソーステキスト
