@@ -1,10 +1,9 @@
 module Konjac
-  # A singleton for dealing with extracting and importing tags from {Microsoft
-  # Word}[http://office.microsoft.com/en-us/word/] 2003+ documents
-  module Word
+  # A singleton for dealing with extracting and importing tags from Microsoft
+  # Office documents
+  module Office
     class << self
-      # Imports the text content of a tag file into a {Microsoft
-      # Word}[http://office.microsoft.com/en-us/word/] 2003+ document
+      # Imports the text content of a tag file into a Microsoft Office
       def import_tags(files, opts = {})
         sub_files = Utils.parse_files(files)
         return if sub_files.empty?
@@ -12,6 +11,8 @@ module Konjac
           case File.extname(sub_file)
           when ".doc"
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_import"), sub_file
+          when ".ppt"
+            system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_powerpoint_import"), sub_file
           when ".docx"
             # Build the list of paths we need to work with
             dirname   = File.dirname(sub_file)
@@ -55,8 +56,7 @@ module Konjac
         end
       end
 
-      # Exports the text content of {Microsoft
-      # Word}[http://office.microsoft.com/en-us/word/] documents
+      # Exports the text content of Microsoft Office document
       def export_tags(files, opts = {})
         # Determine whether to attempt translating
         if opts[:from_given] && opts[:to_given]
@@ -76,6 +76,10 @@ module Konjac
             break unless Utils.user_allows_overwrite?(sub_file + ".diff")
 
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_export"), sub_file
+          when ".ppt"
+            break unless Utils.user_allows_overwrite?(sub_file + ".diff")
+
+            system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_powerpoint_export"), sub_file
           when ".docx"
             # Build a list of all the paths we're working with
             dirname    = File.dirname(sub_file)
@@ -135,14 +139,6 @@ module Konjac
           else
             puts I18n.t(:unknown) % sub_file
           end
-        end
-      end
-
-      # Opens the .konjac tag files for the specified .docx files
-      def edit_docx_tags(files)
-        sub_files = Utils.force_extension(files, ".konjac")
-        sub_files.each do |sub_file|
-          system "$EDITOR #{sub_file}"
         end
       end
 

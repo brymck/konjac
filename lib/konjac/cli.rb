@@ -12,8 +12,8 @@ module Konjac
 
     class << self
       # A list of valid subcommands
-      SUB_COMMANDS = ["add", "edit", "export", "import", "language", "list",
-        "suggest", "translate", "use"]
+      SUB_COMMANDS = ["add", "export", "import", "language", "list", "suggest",
+        "translate", "use"]
 
       # The minimum amount by which to offset subcommands in standard display.
       # Should be equal to the length of the longest top-level flag (e.g. the
@@ -68,13 +68,6 @@ eos
               opt :help, I18n.t(:help, :scope => :opts)
             end
             Dictionary.add_word opts
-          when "edit"
-            Trollop::options do
-              banner sc_banner % I18n.t(:filenames_arg)
-              opt :editor, I18n.t(:editor, :scope => :opts), :type => :string
-              opt :help, I18n.t(:help, :scope => :opts)
-            end
-            Word.edit_docx_tags ARGV, opts
           when "export"
             opts = Trollop::options do
               banner sc_banner % I18n.t(:filenames_arg)
@@ -87,14 +80,14 @@ eos
                 :default => Config.dictionary, :multi => true
               opt :help, I18n.t(:help, :scope => :opts)
             end
-            Word.export_tags ARGV, opts
+            Office.export_tags ARGV, opts
           when "import"
             opts = Trollop::options do
               banner sc_banner % I18n.t(:filenames_arg)
               opt :output, I18n.t(:output, :scope => :opts), :type => :string
               opt :help, I18n.t(:help, :scope => :opts)
             end
-            Word.import_tags ARGV, opts
+            Office.import_tags ARGV, opts
           when "language"
             Trollop::options do
               banner sc_banner % I18n.t(:word_arg)

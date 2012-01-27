@@ -200,7 +200,7 @@ module Konjac
         result << term
 
         # Either last letter is a word character or it's not escaped
-        result << "\\b" if term[0..1] =~ /\w$|[^\\].$/
+        result << "\\b" if term[-2..-1] =~ /(\w|[^\\].)$/
         result
       end
 

@@ -30,7 +30,6 @@ ja:
     word: 文字列を翻訳する
   subcommands:
     add: 翻訳メモリに定義を追加する
-    edit: .docまたは.docxファイルに当たるタグファイルを編集する
     export: .docまたは.docxファイルからタグを抽出する
     import: .docまたは.docxファイルにタグをインポートする
     language: 言語を設定する

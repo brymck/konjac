@@ -1,0 +1,116 @@
+#!/usr/bin/osascript
+-- round up ASCII characters used for formatting in Word
+global bell
+global line_feed
+global form_feed
+global carriage_return
+global format_chars
+
+-- strip line breaks and formatting characters
+to strip_line_breaks(this_line)
+  try
+    -- remove last character until no it's no longer an excluded character
+    repeat while last character of this_line is in format_chars
+      set this_line to characters 1 thru -2 of this_line as string
+    end repeat
+    return this_line as text
+  on error
+    return ""
+  end try
+end strip_line_breaks
+
+to get_posix_path(mac_path)
+  set result to POSIX path of mac_path
+end get_posix_path
+
+to extract(filename)
+  tell application "Microsoft PowerPoint"
+    activate
+    open filename
+    set active_presentation to active presentation
+    set ignored_content to {missing value, "", line_feed}
+    
+    -- set tags path to full path to active presentation with a .tags extension
+    set presentation_path to (path of active_presentation) & ":" & ¬
+      (name of active_presentation)
+    set tags_path to presentation_path & ".diff"
+    
+    -- delete tags file if it already exists
+    tell application "Finder"
+      if exists file tags_path then
+        delete file tags_path
+      end if
+    end tell
+    
+    -- open tags file for writing
+    set tags_file to open for access file tags_path with write permission
+    set eof of tags_file to 0
+
+    write ("--- " & my get_posix_path(presentation_path)) to tags_file
+    write line_feed to tags_file
+    write ("+++ " & my get_posix_path(presentation_path)) to tags_file
+    write line_feed to tags_file
+
+    -- iterate through slides
+    set slide_index to 1
+    set slide_count to count of slides in active_presentation
+
+    repeat while slide_index is less than or equal to slide_count
+      set current_slide to slide slide_index in active_presentation
+
+      -- iterate through shapes
+      set shape_index to 1
+      set shape_count to count of shapes in current_slide
+
+      repeat while shape_index is less than or equal to shape_count
+        -- set current shape
+        set current_shape to shape shape_index of current_slide
+
+        -- get text content if it's available
+        set text_content to my strip_line_breaks(content of text range of text frame of current_shape) as string
+
+        -- replace "soft returns" (vertical tabs) with real returns
+        set old_delimiters to AppleScript's text item delimiters
+        set AppleScript's text item delimiters to carriage_return
+        set split_content to every text item of text_content
+        set AppleScript's text item delimiters to old_delimiters
+
+        if text_content is not in ignored_content then
+          write ("@@ " & slide_index & "," & shape_index & " @@") to tags_file
+          write line_feed to tags_file
+          repeat with text_line in split_content
+            write ("-" & text_line) to tags_file as «class utf8»
+            write line_feed to tags_file
+          end repeat
+          repeat with text_line in split_content
+            write ("+" & text_line) to tags_file as «class utf8»
+            write line_feed to tags_file
+          end repeat
+        end if
+
+        set shape_index to (shape_index + 1)
+      end repeat
+
+      -- increment slide index
+      set slide_index to (slide_index + 1)
+    end repeat
+    
+    -- close everything
+    close access tags_file
+  end tell
+end extract
+
+-- initialize global variables, just formatting characters here
+to init_globals()
+  set bell to ASCII character 7
+  set line_feed to ASCII character 10
+  set form_feed to ASCII character 12
+  set carriage_return to ASCII character 13
+  set format_chars to {bell, line_feed, form_feed, carriage_return}
+end init_globals
+
+-- main()
+on run argv
+  init_globals()
+  extract(item 1 of argv)
+end

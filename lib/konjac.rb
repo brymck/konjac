@@ -15,12 +15,12 @@ module Konjac
   autoload :Config,     "konjac/config"
   autoload :Dictionary, "konjac/dictionary"
   autoload :Language,   "konjac/language"
+  autoload :Office,     "konjac/office"
   autoload :Suggestor,  "konjac/suggestor"
   autoload :Tag,        "konjac/tag"
   autoload :TagManager, "konjac/tag_manager"
   autoload :Translator, "konjac/translator"
   autoload :Utils,      "konjac/utils"
-  autoload :Word,       "konjac/word"
 
   Config.load
 end
