@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.require_paths    = ["lib"]
 
   s.add_runtime_dependency "amatch"
+  s.add_runtime_dependency "git"
   s.add_runtime_dependency "highline"
   s.add_runtime_dependency "i18n"
   s.add_runtime_dependency "nokogiri"

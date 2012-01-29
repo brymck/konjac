@@ -12,8 +12,8 @@ module Konjac
 
     class << self
       # A list of valid subcommands
-      SUB_COMMANDS = ["add", "export", "import", "language", "list", "suggest",
-        "translate", "use"]
+      SUB_COMMANDS = ["add", "export", "import", "install", "language", "list",
+        "suggest", "translate", "update", "use"]
 
       # The minimum amount by which to offset subcommands in standard display.
       # Should be equal to the length of the longest top-level flag (e.g. the
@@ -88,6 +88,17 @@ eos
               opt :help, I18n.t(:help, :scope => :opts)
             end
             Office.import_tags ARGV, opts
+          when "install"
+            Trollop::options do
+              banner sc_banner % I18n.t(:word_arg)
+              opt :help, I18n.t(:help, :scope => :opts)
+            end
+            case ARGV[0]
+            when "dictionaries", "dict", "dictionary"
+              Installer.install_dictionaries
+            when "vim"
+              Installer.install_vim
+            end
           when "language"
             Trollop::options do
               banner sc_banner % I18n.t(:word_arg)
@@ -135,6 +146,17 @@ eos
             end
             result = translate(ARGV, opts)
             puts result if opts[:word]
+          when "update"
+            Trollop::options do
+              banner sc_banner % I18n.t(:word_arg)
+              opt :help, I18n.t(:help, :scope => :opts)
+            end
+            case ARGV[0]
+            when "dictionaries", "dict", "dictionary"
+              Installer.update_dictionaries
+            when "vim"
+              Installer.update_vim
+            end
           when "use"
             Trollop::options do
               banner sc_banner % I18n.t(:word_arg)

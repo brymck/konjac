@@ -158,6 +158,11 @@ Should be simple enough to generate yourself:
     mv doc/rdoc/* .
     rm -rf doc
 
+== Supplementary Stuff
+
+{Vim integration}[https://github.com/brymck/konjac_vim]
+{My dictionaries}[https://github.com/brymck/konjac_yml]
+
 == Name
 
 <em>Hon'yaku</em> means "translation" in Japanese. This utility relies on a

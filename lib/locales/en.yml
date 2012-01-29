@@ -18,12 +18,14 @@ en:
     force: Automatically overwrite files
     from: The language from which to translate
     help: Show this message
+    install: Install supplementary scripts
     original: The untranslated original text
     output: The name of the output file
     prompt: Prompt before overwriting a file
     quiet: Suppress error messages
     to: The language into which to translate
     translation: The translated text
+    update: Update supplementary scripts
     using: The names of dictionaries to use
     use_cache: Use cached dictionary
     version: Print version and exit

@@ -18,12 +18,14 @@ ja:
     force: 自動にファイルを上書きする
     from: ソース言語
     help: このメッセージを表示する
+    install: スクリプトなどをインストールする
     original: ソーステキスト
     output: 出力ファイル名
     prompt: ファイルをする場合に警告する
     quiet: エラーメッセージを抑止する
     to: ターゲット言語
     translation: ターゲットテキスト
+    update: スクリプトなどをアップデートする
     using: 使用したい辞書の名前
     use_cache: キャッシュした翻訳メモリを適用する
     version: バーションを表示し終了する
