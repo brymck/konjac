@@ -160,8 +160,8 @@ Should be simple enough to generate yourself:
 
 == Supplementary Stuff
 
-{Vim integration}[https://github.com/brymck/konjac_vim]
-{My dictionaries}[https://github.com/brymck/konjac_yml]
+  * {Vim integration}[https://github.com/brymck/konjac_vim]
+  * {My dictionaries}[https://github.com/brymck/konjac_yml]
 
 == Name
 
