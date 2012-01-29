@@ -1,11 +1,14 @@
 en:
   banner: Konjac is a Ruby command-line utility for translating files using a YAML wordlist
+  command_not_found: "Command not found: %s"
   filenames_arg: <filenames>+
   filenames_or_word_arg: <filenames>+ OR <text>
   me: Bryan McKelvey
   no_match: "No files matching \"%s\" found!"
   options: options
   overwrite: "Overwrite %s? (y/n [n]) "
+  script_arg: dictionaries|vim
+  script_not_found: "Script not found: %s"
   subcommand: subcommand
   unknown_subcommand: "Unknown subcommand: %s"
   usage: "Usage:"
@@ -18,24 +21,30 @@ en:
     force: Automatically overwrite files
     from: The language from which to translate
     help: Show this message
-    install: Install supplementary scripts
     original: The untranslated original text
     output: The name of the output file
     prompt: Prompt before overwriting a file
     quiet: Suppress error messages
     to: The language into which to translate
     translation: The translated text
-    update: Update supplementary scripts
     using: The names of dictionaries to use
     use_cache: Use cached dictionary
     version: Print version and exit
     word: Translate a word or phrase
+  scripts:
+    installing: "Installing %s... "
+    updating: "Updating %s... "
+    vim_script: "Vim script"
+    dictionaries: "dictionaries"
+    done: "done!"
   subcommands:
     add: Add a definition to translation memory
     export: Export text tags from a .doc or .docx file
     import: Import text tags into a .doc or .docx file
+    install: Install supplementary scripts
     language: Sets the default language
     list: List available dictionaries
     suggest: Suggest similar words using fuzzy matching
     translate: Translate a file, word or phrase
+    update: Update supplementary scripts
     use: Choose a default dictionary

@@ -90,15 +90,10 @@ eos
             Office.import_tags ARGV, opts
           when "install"
             Trollop::options do
-              banner sc_banner % I18n.t(:word_arg)
+              banner sc_banner % I18n.t(:script_arg)
               opt :help, I18n.t(:help, :scope => :opts)
             end
-            case ARGV[0]
-            when "dictionaries", "dict", "dictionary"
-              Installer.install_dictionaries
-            when "vim"
-              Installer.install_vim
-            end
+            Installer.run :install, ARGV[0].dup
           when "language"
             Trollop::options do
               banner sc_banner % I18n.t(:word_arg)
@@ -148,15 +143,10 @@ eos
             puts result if opts[:word]
           when "update"
             Trollop::options do
-              banner sc_banner % I18n.t(:word_arg)
+              banner sc_banner % I18n.t(:script_arg)
               opt :help, I18n.t(:help, :scope => :opts)
             end
-            case ARGV[0]
-            when "dictionaries", "dict", "dictionary"
-              Installer.update_dictionaries
-            when "vim"
-              Installer.update_vim
-            end
+            Installer.run :update, ARGV[0].dup
           when "use"
             Trollop::options do
               banner sc_banner % I18n.t(:word_arg)

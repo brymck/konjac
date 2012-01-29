@@ -6,10 +6,34 @@ module Konjac
     YML_GIT = "git://github.com/brymck/konjac_yml.git"
 
     class << self
+      # Parses the provided command and script to install or update plugins and
+      # dictionary files
+      def run(command, script)
+        case script.to_sym
+        when :dictionaries, :dict, :dictionary
+          script = "dictionaries"
+        when :vim
+          script = "vim"
+        else
+          puts I18n.t(:script_not_found, :scope => :scripts) % script
+          return 
+        end
+
+        case command.to_sym
+        when :install, :update
+          # Build a command
+          __send__ [command, script].join("_")
+        else
+          puts I18n.t(:command_not_found, :scope => :scripts) % command
+        end
+      end
+      
       # Install the supplementary {Vim plugin}[https://github.com/brymck/konjac_vim]
       def install_vim
+        return update_vim if has_pathogen? && vim_installed?
+
+        print I18n.t(:installing, :scope => :scripts) % I18n.t(:vim_script, :scope => :scripts)
         if has_pathogen?
-          return update_vim if vim_installed?
 
           system File.join(File.dirname(__FILE__), "..", "bash", "install_vim")
         else
@@ -19,6 +43,7 @@ module Konjac
             FileUtils.remove_entry_secure dir
           end
         end
+        puts I18n.t(:done, :scope => :scripts)
       end
 
       # Install the supplementary {dictionaries}[https://github.com/brymck/konjac_yml]
@@ -26,6 +51,7 @@ module Konjac
         if dictionaries_installed?
           update_dictionaries
         else
+          print I18n.t(:installing, :scope => :scripts) % I18n.t(:dictionaries, :scope => :scripts)
           Dir.chdir(konjac_home) do
             g = Git.clone(YML_GIT, ".dictionaries", :name => ".dictionaries",
               :path => konjac_home)
@@ -33,13 +59,16 @@ module Konjac
               FileUtils.cp_r Dir.glob("*.yml"), konjac_home
             end
           end
+          puts I18n.t(:done, :scope => :scripts)
         end
       end
 
       # Update the supplementary {Vim plugin}[https://github.com/brymck/konjac_vim]
       def update_vim
         if has_pathogen? && vim_installed?
+          print I18n.t(:updating, :scope => :scripts) % I18n.t(:vim_script, :scope => :scripts)
           system File.join(File.dirname(__FILE__), "..", "bash", "update_vim")
+          puts I18n.t(:done, :scope => :scripts)
         else
           install_vim
         end
@@ -48,11 +77,13 @@ module Konjac
       # Update the supplementary {dictionaries}[https://github.com/brymck/konjac_yml]
       def update_dictionaries
         if dictionaries_installed?
+          print I18n.t(:installing, :scope => :scripts) % I18n.t(:dictionaries, :scope => :scripts)
           g = Git.open(File.join(konjac_home, ".dictionaries"))
           g.pull
           g.chdir do
             FileUtils.cp_r Dir.glob("*.yml"), konjac_home
           end
+          puts I18n.t(:done, :scope => :scripts)
         else
           install_dictionaries
         end
