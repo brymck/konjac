@@ -3,6 +3,7 @@ ja:
   command_not_found: "コマンドは見つかりません：%s"
   filenames_arg: <ファイル名>+
   filenames_or_word_arg: <ファイル名>+ または <テキスト>
+  mac_only: このコマンドは現在、Macのみです。
   me: ブライアン・マッケルビー
   no_match: "「%s」をマッチするファイルは存在しません。"
   options: オプション
