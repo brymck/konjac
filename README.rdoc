@@ -7,6 +7,21 @@ Author::        Bryan McKelvey
 Copyright::     (c) 2012 Bryan McKelvey
 License::       MIT
 
+== Features
+
+* <b>Fuzzy matching</b> - Konjac can make suggestions for similar words based on
+  their similarity.
+* <b>Whitespace handling</b> - It's still pretty lazy but at least functional
+* <b>One-way translation</b> - For example, you would always convert full-width
+  letters and numbers in Japanese to their half-width counterparts in English.
+  The converse is not necessarily true.
+* <b>Regular expressions</b> - Stuff like
+  <tt>/(\d+)年(\d+)月(\d+)日/\2\/\3\/\1/</tt> (i.e. <tt>1984年11月23日 # =>
+  11/23/1984</tt>)
+* <b>Importing/exporting text from/to Office documents</b> - Currently only
+  working on Mac (support for Word planned, but for *nix it's probably too
+  difficult).
+
 == Installation
 
 === Stable
@@ -89,61 +104,9 @@ translate as 犬:
   -
     en: dog
     ja:
-    ja: 犬
-    en: dogs?
-    regex: true  # i.e. the regular expression /dogs?/
-
-== Extended Example
-
-~/.konjac/dict.yml:
-
-  -
-    en: I
-    ja: 僕
-  -
-    en: like
-    ja: 好き
-  -
-    en:
-    en: dog
-    ja: 犬
-    ja:
-    ja: 犬
-    en: dogs?
-    regex: true  # i.e. the regular expression /dogs?/
-  - # Periods
-    en:
-    en: ". "
-    ja: 。
-    ja:
-    ja: 。
-    en: !ruby/regexp '/\.(?:\s|$)/'
-  - # Spaces between non-ASCII characters
-    en:
-    en: " "
-    ja: !ruby/regexp /\s{2,}/
-    ja:
-    ja: "\\1\\2"
-    en: !ruby/regexp /([^\w])\s([^\w])/
-  - # Delete extraneous spaces
-    en:
-    en: ""
-    ja: !ruby/regexp /\s(?=[.,:]|$)/
-
-~/.konjac/test_en.txt:
-
-  I like dogs.
-
-Run
-
-  konjac translate ~/.konjac/test_en.txt --to japanese
-
-~/.konjac/test_ja.txt (result):
-
-  僕好き犬。
-
-Now, obviously that does require some fiddling to make it more grammatical, but
-it's a start (=> <tt>僕は犬が好きだ。</tt>)
+      ja: 犬
+      en: dogs?
+      regex: true  # i.e. the regular expression /dogs?/
 
 == Documentation
 
@@ -160,8 +123,8 @@ Should be simple enough to generate yourself:
 
 == Supplementary Stuff
 
-  * {Vim integration}[https://github.com/brymck/konjac_vim]
-  * {My dictionaries}[https://github.com/brymck/konjac_yml]
+* {Vim plugin}[https://github.com/brymck/konjac_vim]
+* {My dictionaries}[https://github.com/brymck/konjac_yml]
 
 == Name
 
