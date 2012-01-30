@@ -87,6 +87,16 @@ Suggest a word using your dictionary:
   konjac suggest dog --from english --to japanese
   konjac suggest dog -f en -t ja
 
+=== Ruby
+
+Create a Suggestor object:
+
+  require "konjac"
+  Konjac::Dictionary.add_word :from => :en, :original => "word",
+                              :to => :ja, :translation => "言葉"
+  s = Konjac::Suggestor.new(:en, :ja)
+  s.suggest "word" # => [[1.0, "word", "言葉"]]
+
 == Dictionary Format
 
 Store terms in <tt>~/.konjac/dict.yml</tt>.

@@ -226,7 +226,7 @@ module Konjac
       # Saves a marshalled Dictionary
       def save_serialized(from_lang, to_lang, dictionaries, pairs)  # :doc:
         file_name = File.expand_path("~/.konjac/marshal/%s_%s_%s" %
-          [from_lang, to_lang, dictionaries.join("_")])
+          [from_lang, to_lang, [dictionaries || :dict].join("_")])
 
         # Create directory structure if necessary
         unless File.exists?(file_name)
@@ -252,6 +252,13 @@ module Konjac
 
       # Finds dictionaries based on the supplied Array
       def find_dictionaries(files)  # :doc:
+        # Set defaults and format as array
+        if files.nil?
+          files = [:dict]
+        else
+          files = [files] unless files.is_a?(Array)
+        end
+
         paths = []
         files.each do |file|
           file = file.to_s
