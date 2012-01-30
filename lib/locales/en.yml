@@ -3,6 +3,7 @@ en:
   command_not_found: "Command not found: %s"
   filenames_arg: <filenames>+
   filenames_or_word_arg: <filenames>+ OR <text>
+  mac_only: This command is currently Mac-only
   me: Bryan McKelvey
   no_match: "No files matching \"%s\" found!"
   options: options

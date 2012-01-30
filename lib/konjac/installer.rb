@@ -32,10 +32,13 @@ module Konjac
       def install_vim
         return update_vim if has_pathogen? && vim_installed?
 
-        print I18n.t(:installing, :scope => :scripts) % I18n.t(:vim_script, :scope => :scripts)
+        puts I18n.t(:installing, :scope => :scripts) % I18n.t(:vim_script, :scope => :scripts)
         if has_pathogen?
-
-          system File.join(File.dirname(__FILE__), "..", "bash", "install_vim")
+          Dir.chdir(vim_home) do
+            system "git submodule add #{VIM_GIT} bundle/konjac_vim"
+            system "git submodule init"
+            system "git submodule update"
+          end
         else
           dir = Dir.mktmpdir
           begin
@@ -43,7 +46,7 @@ module Konjac
             FileUtils.remove_entry_secure dir
           end
         end
-        puts I18n.t(:done, :scope => :scripts)
+        puts I18n.t(:done, :scope => :scripts).capitalize
       end
 
       # Install the supplementary {dictionaries}[https://github.com/brymck/konjac_yml]
@@ -66,7 +69,10 @@ module Konjac
       # Update the supplementary {Vim plugin}[https://github.com/brymck/konjac_vim]
       def update_vim
         if has_pathogen? && vim_installed?
-          print I18n.t(:updating, :scope => :scripts) % I18n.t(:vim_script, :scope => :scripts)
+          puts I18n.t(:updating, :scope => :scripts) % I18n.t(:vim_script, :scope => :scripts)
+          Dir.chdir(File.join(vim_home, "bundle", "konjac_vim")) do
+            system "git pull origin master"
+          end
           system File.join(File.dirname(__FILE__), "..", "bash", "update_vim")
           puts I18n.t(:done, :scope => :scripts)
         else

@@ -10,8 +10,10 @@ module Konjac
         sub_files.each do |sub_file|
           case File.extname(sub_file)
           when ".doc"
+            return if OS.not_a_mac
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_import"), sub_file
           when ".ppt"
+            return if OS.not_a_mac
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_powerpoint_import"), sub_file
           when ".docx"
             # Build the list of paths we need to work with
@@ -73,10 +75,12 @@ module Konjac
         sub_files.each do |sub_file|
           case File.extname(sub_file)
           when ".doc"
+            return if OS.not_a_mac
             break unless Utils.user_allows_overwrite?(sub_file + ".diff")
 
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_export"), sub_file
           when ".ppt"
+            return if OS.not_a_mac
             break unless Utils.user_allows_overwrite?(sub_file + ".diff")
 
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_powerpoint_export"), sub_file
