@@ -41,7 +41,9 @@ ja:
   subcommands:
     add: 翻訳メモリに定義を追加する
     export: MSオフィス・ドキュメントからタグを抽出する
+    exportxml: Word 2003+からXMLベースのタグを抽出する
     import: MSオフィス・ドキュメントにタグをインポートする
+    importxml: Word 2003+にXMLベースのタグをインポートする
     install: スクリプトなどをインストールする
     language: 言語を設定する
     list: 使用できる辞書を表示する

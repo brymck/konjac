@@ -3,21 +3,34 @@ module Konjac
   # Office documents
   module Office
     class << self
-      # Imports the text content of a tag file into a Microsoft Office
+      # Imports the text content of a tag file into a Microsoft Office document
       def import_tags(files, opts = {})
         sub_files = Utils.parse_files(files)
         return if sub_files.empty?
         sub_files.each do |sub_file|
           case File.extname(sub_file)
-          when ".doc"
+          when ".doc", ".docx"
             return if OS.not_a_mac
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_import"), sub_file
-          when ".ppt"
+          when ".ppt", ".pptx"
             return if OS.not_a_mac
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_powerpoint_import"), sub_file
-          when ".xls"
+          when ".xls", ".xlsx"
             return if OS.not_a_mac
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_excel_import"), sub_file
+          else
+            puts I18n.t(:unknown) % sub_file
+          end
+        end
+      end
+
+      # Imports the text content of a tag file into a Word 2003+, utilizing a
+      # cleaned-up version of the document's original XML structure
+      def import_xml(files, opts = {})
+        sub_files = Utils.parse_files(files)
+        return if sub_files.empty?
+        sub_files.each do |sub_file|
+          case File.extname(sub_file)
           when ".docx"
             # Build the list of paths we need to work with
             dirname   = File.dirname(sub_file)
@@ -77,21 +90,47 @@ module Konjac
         return if sub_files.empty?
         sub_files.each do |sub_file|
           case File.extname(sub_file)
-          when ".doc"
+          when ".doc", ".docx"
             return if OS.not_a_mac
             break unless Utils.user_allows_overwrite?(sub_file + ".diff")
 
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_word_export"), sub_file
-          when ".ppt"
+          when ".ppt", ".pptx"
             return if OS.not_a_mac
             break unless Utils.user_allows_overwrite?(sub_file + ".diff")
 
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_powerpoint_export"), sub_file
-          when ".xls"
+          when ".xls", ".xlsx"
             return if OS.not_a_mac
             break unless Utils.user_allows_overwrite?(sub_file + ".diff")
 
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_excel_export"), sub_file
+          else
+            puts I18n.t(:unknown) % sub_file
+          end
+        end
+      end
+
+      # Exports the Word document in XML then extracts the tags and condenses
+      # like paragraphs
+      #
+      # I might deprecate this, but it exports XML. It's much faster, but
+      # supporting two methods might not be a great idea.
+      def export_xml(files, opts = {})
+        # Determine whether to attempt translating
+        if opts[:from_given] && opts[:to_given]
+          from_lang = Language.find(opts[:from])
+          to_lang   = Language.find(opts[:to])
+          unless from_lang.nil? || to_lang.nil?
+            Translator.load_dictionary from_lang, to_lang, opts
+            attempting_to_translate = true
+          end
+        end
+
+        sub_files = Utils.parse_files(files)
+        return if sub_files.empty?
+        sub_files.each do |sub_file|
+          case File.extname(sub_file)
           when ".docx"
             # Build a list of all the paths we're working with
             dirname    = File.dirname(sub_file)

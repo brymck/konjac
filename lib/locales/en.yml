@@ -41,7 +41,9 @@ en:
   subcommands:
     add: Add a definition to translation memory
     export: Export text tags from an MS Office document
+    exportxml: Export XML-based text tags from a Word 2003+ document
     import: Import text tags into an MS Office document
+    importxml: Import XML-based text tags into a Word 2003+ document
     install: Install supplementary scripts
     language: Sets the default language
     list: List available dictionaries

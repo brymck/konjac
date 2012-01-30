@@ -12,8 +12,8 @@ module Konjac
 
     class << self
       # A list of valid subcommands
-      SUB_COMMANDS = ["add", "export", "import", "install", "language", "list",
-        "suggest", "translate", "update", "use"]
+      SUB_COMMANDS = ["add", "export", "exportxml", "import", "importxml",
+        "install", "language", "list", "suggest", "translate", "update", "use"]
 
       # The minimum amount by which to offset subcommands in standard display.
       # Should be equal to the length of the longest top-level flag (e.g. the
@@ -81,6 +81,19 @@ eos
               opt :help, I18n.t(:help, :scope => :opts)
             end
             Office.export_tags ARGV, opts
+          when "exportxml"
+            opts = Trollop::options do
+              banner sc_banner % I18n.t(:filenames_arg)
+              opt :from, I18n.t(:from, :scope => :opts), :type => :string
+              opt :to, I18n.t(:to, :scope => :opts), :type => :string
+              opt :output, I18n.t(:output, :scope => :opts), :type => :string
+              opt :force, I18n.t(:force, :scope => :opts), :default => false,
+                :short => :y
+              opt :using, I18n.t(:using, :scope => :opts), :type => :string,
+                :default => Config.dictionary, :multi => true
+              opt :help, I18n.t(:help, :scope => :opts)
+            end
+            Office.export_xml ARGV, opts
           when "import"
             opts = Trollop::options do
               banner sc_banner % I18n.t(:filenames_arg)
@@ -88,6 +101,13 @@ eos
               opt :help, I18n.t(:help, :scope => :opts)
             end
             Office.import_tags ARGV, opts
+          when "importxml"
+            opts = Trollop::options do
+              banner sc_banner % I18n.t(:filenames_arg)
+              opt :output, I18n.t(:output, :scope => :opts), :type => :string
+              opt :help, I18n.t(:help, :scope => :opts)
+            end
+            Office.import_xml ARGV, opts
           when "install"
             Trollop::options do
               banner sc_banner % I18n.t(:script_arg)

@@ -2,7 +2,10 @@
 module Konjac
   # A class to help with installing supplementary tools for Konjac
   module Installer
+    # The location of my Konjac Vim plugin repository
     VIM_GIT = "git://github.com/brymck/konjac_vim.git"
+
+    # The location fo my Konjac supplementary dictionary repository
     YML_GIT = "git://github.com/brymck/konjac_yml.git"
 
     class << self
