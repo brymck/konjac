@@ -14,7 +14,7 @@ License::       MIT
 With {Ruby}[http://www.ruby-lang.org/en/downloads/] installed, run the
 following in your terminal:
 
-    gem install konjac
+  gem install konjac
 
 === Development
 
@@ -22,55 +22,55 @@ With Ruby, {Git}[http://help.github.com/set-up-git-redirect] and
 {Bundler}[http://gembundler.com/] installed, navigate in your command line to a
 directory of your choice, then run:
 
-    git clone git://github.com/brymck/konjac.git
-    cd konjac
-    bundle update
-    rake install
+  git clone git://github.com/brymck/konjac.git
+  cd konjac
+  bundle update
+  rake install
 
 == Usage
 
 Translate all text files in the current directory from Japanese into English:
 
-    konjac translate *.txt --from japanese --to english
-    konjac translate *.txt -f ja -t en
+  konjac translate *.txt --from japanese --to english
+  konjac translate *.txt -f ja -t en
 
 Use multiple dictionaries:
 
-    konjac translate financial_report_en.txt --to japanese --using {finance,fluffery}
-    konjac translate financial_report_en.txt -t ja -u {finance,fluffery}
+  konjac translate financial_report_en.txt --to japanese --using {finance,fluffery}
+  konjac translate financial_report_en.txt -t ja -u {finance,fluffery}
 
 Extract text from a .docx? document (creates a plain-text <tt>test.konjac</tt>
 file from <tt>test.docx</tt>):
 
-    konjac export test.doc
-    konjac export test.docx
+  konjac export test.doc
+  konjac export test.docx
 
 Extract text from a .docx document and process with a dictionary
 
-    konjac export test.docx --from japanese --to english --using pre
-    konjac export test.docx -f ja -t en -u pre
+  konjac export test.docx --from japanese --to english --using pre
+  konjac export test.docx -f ja -t en -u pre
 
 Import tags file back into .docx document (for .doc files, this opens the file
 in word and imports the changes; for .docx files this outputs a new file named
 <tt>test_imported.docx</tt>):
 
-    konjac import test.doc
-    konjac import test.docx
+  konjac import test.doc
+  konjac import test.docx
 
 Add a word to your dictionary:
 
-    konjac add --original dog --from english --translation 犬 --to japanese
-    konjac add -o dog -f en -r 犬 -t ja
+  konjac add --original dog --from english --translation 犬 --to japanese
+  konjac add -o dog -f en -r 犬 -t ja
 
 Translate a word using your dictionary:
 
-    konjac translate dog --from english --to japanese --word
-    konjac translate dog -f en -t ja -w
+  konjac translate dog --from english --to japanese --word
+  konjac translate dog -f en -t ja -w
 
 Suggest a word using your dictionary:
 
-    konjac suggest dog --from english --to japanese
-    konjac suggest dog -f en -t ja
+  konjac suggest dog --from english --to japanese
+  konjac suggest dog -f en -t ja
 
 == Dictionary Format
 
@@ -79,68 +79,68 @@ Store terms in <tt>~/.konjac/dict.yml</tt>.
 <em>Simple (two-way equivalent terms)</em> - English "I" is equivalent to Spanish
 "yo":
 
-    -
-      en: I
-      es: yo
+  -
+    en: I
+    es: yo
 
 <em>Not as simple</em> - Japanese lacks a plural, therefore both "dog" and "dogs"
 translate as 犬:
 
-    -
-      en: dog
-      ja:
-        ja: 犬
-        en: dogs?
-        regex: true  # i.e. the regular expression /dogs?/
+  -
+    en: dog
+    ja:
+    ja: 犬
+    en: dogs?
+    regex: true  # i.e. the regular expression /dogs?/
 
 == Extended Example
 
 ~/.konjac/dict.yml:
 
-    -
-      en: I
-      ja: 僕
-    -
-      en: like
-      ja: 好き
-    -
-      en:
-        en: dog
-        ja: 犬
-      ja:
-        ja: 犬
-        en: dogs?
-        regex: true  # i.e. the regular expression /dogs?/
-    - # Periods
-      en:
-        en: ". "
-        ja: 。
-      ja:
-        ja: 。
-        en: !ruby/regexp '/\.(?:\s|$)/'
-    - # Spaces between non-ASCII characters
-      en:
-        en: " "
-        ja: !ruby/regexp /\s{2,}/
-      ja:
-        ja: "\\1\\2"
-        en: !ruby/regexp /([^\w])\s([^\w])/
-    - # Delete extraneous spaces
-      en:
-        en: ""
-        ja: !ruby/regexp /\s(?=[.,:]|$)/
+  -
+    en: I
+    ja: 僕
+  -
+    en: like
+    ja: 好き
+  -
+    en:
+    en: dog
+    ja: 犬
+    ja:
+    ja: 犬
+    en: dogs?
+    regex: true  # i.e. the regular expression /dogs?/
+  - # Periods
+    en:
+    en: ". "
+    ja: 。
+    ja:
+    ja: 。
+    en: !ruby/regexp '/\.(?:\s|$)/'
+  - # Spaces between non-ASCII characters
+    en:
+    en: " "
+    ja: !ruby/regexp /\s{2,}/
+    ja:
+    ja: "\\1\\2"
+    en: !ruby/regexp /([^\w])\s([^\w])/
+  - # Delete extraneous spaces
+    en:
+    en: ""
+    ja: !ruby/regexp /\s(?=[.,:]|$)/
 
 ~/.konjac/test_en.txt:
 
-    I like dogs.
+  I like dogs.
 
 Run
 
-    konjac translate ~/.konjac/test_en.txt --to japanese
+  konjac translate ~/.konjac/test_en.txt --to japanese
 
 ~/.konjac/test_ja.txt (result):
 
-    僕好き犬。
+  僕好き犬。
 
 Now, obviously that does require some fiddling to make it more grammatical, but
 it's a start (=> <tt>僕は犬が好きだ。</tt>)
@@ -149,14 +149,14 @@ it's a start (=> <tt>僕は犬が好きだ。</tt>)
 
 Should be simple enough to generate yourself:
 
-    rm -rf konjac
-    git clone git://github.com/brymck/konjac
-    cd konjac
-    bundle update
-    rake rdoc
-    rm -rf !(doc)
-    mv doc/rdoc/* .
-    rm -rf doc
+  rm -rf konjac
+  git clone git://github.com/brymck/konjac
+  cd konjac
+  bundle update
+  rake rdoc
+  rm -rf !(doc)
+  mv doc/rdoc/* .
+  rm -rf doc
 
 == Supplementary Stuff
 
