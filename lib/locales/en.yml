@@ -40,8 +40,8 @@ en:
     done: "done!"
   subcommands:
     add: Add a definition to translation memory
-    export: Export text tags from a .doc or .docx file
-    import: Import text tags into a .doc or .docx file
+    export: Export text tags from an MS Office document
+    import: Import text tags into an MS Office document
     install: Install supplementary scripts
     language: Sets the default language
     list: List available dictionaries

@@ -40,8 +40,8 @@ ja:
     done: "終了！"
   subcommands:
     add: 翻訳メモリに定義を追加する
-    export: .docまたは.docxファイルからタグを抽出する
-    import: .docまたは.docxファイルにタグをインポートする
+    export: MSオフィス・ドキュメントからタグを抽出する
+    import: MSオフィス・ドキュメントにタグをインポートする
     install: スクリプトなどをインストールする
     language: 言語を設定する
     list: 使用できる辞書を表示する

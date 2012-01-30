@@ -15,6 +15,9 @@ module Konjac
           when ".ppt"
             return if OS.not_a_mac
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_powerpoint_import"), sub_file
+          when ".xls"
+            return if OS.not_a_mac
+            system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_excel_import"), sub_file
           when ".docx"
             # Build the list of paths we need to work with
             dirname   = File.dirname(sub_file)
@@ -84,6 +87,11 @@ module Konjac
             break unless Utils.user_allows_overwrite?(sub_file + ".diff")
 
             system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_powerpoint_export"), sub_file
+          when ".xls"
+            return if OS.not_a_mac
+            break unless Utils.user_allows_overwrite?(sub_file + ".diff")
+
+            system File.join(File.dirname(__FILE__), "..", "applescripts", "konjac_excel_export"), sub_file
           when ".docx"
             # Build a list of all the paths we're working with
             dirname    = File.dirname(sub_file)
