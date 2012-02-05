@@ -15,6 +15,16 @@ to parse_header(header)
   return at_offset
 end parse_header
 
+to ends_with_forbidden_character(txt)
+  set last_character to character -1 of txt
+
+  if last_character is in {line_feed, carriage_return, vertical_tab}
+    return true
+  else
+    return false
+  end if
+end ends_with_forbidden_character
+
 to get_posix_path(mac_path)
   set result to POSIX path of mac_path
 end get_posix_path
@@ -82,7 +92,27 @@ to import(filename)
         set my_range to create range active document ¬
                           start (start of content of current_content) ¬
                           end (end of content of current_content)
+
         select my_range
+
+        -- FIXME: this is super-ugly
+        if count of paragraphs of selection is greater than 1
+          set my_range to create range active document ¬
+                            start (start of content of text object of selection) ¬
+                            end ((end of content of text object of selection) - 1)
+          select my_range
+          repeat while (count of paragraphs of selection is greater than 1)
+            selection move start of range by a line item
+          end repeat
+        end if
+
+        repeat while my ends_with_forbidden_character(content of selection as text)
+          set my_range to create range active document ¬
+                            start (start of content of text object of selection) ¬
+                            end ((end of content of text object of selection) - 1)
+          select my_range
+        end repeat
+
         type text selection text text_content
         set text_content to ""
       end if

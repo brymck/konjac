@@ -256,12 +256,12 @@ module Konjac
 
       # Convert to underscore case
       def underscore(str)  # :doc:
-        str.to_s.                              # allow symbols and strings
-        gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').  # underscore-delimit caps
-        gsub(/([a-z\d])\s?([A-Z])/,'\1_\2').   # underscore-delimit words
-        tr("-", "_").                          # dashes to underscores
-        downcase.                              # everything lowercase
-        to_sym                                 # convert to symbol
+        str.to_s.                               # allow symbols and strings
+        gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2').  # underscore-delimit caps
+        gsub(/([a-z\d])\s?([A-Z])/, '\1_\2').   # underscore-delimit words
+        tr("-", "_").                           # dashes to underscores
+        downcase.                               # everything lowercase
+        to_sym                                  # convert to symbol
       end
     end
   end
