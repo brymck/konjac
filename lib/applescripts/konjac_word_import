@@ -104,7 +104,7 @@ to import(filename)
             select my_range
             repeat while (count of paragraphs of selection is greater than 1)
               -- maybe?
-              my_range move start of range by a line item
+              set my_range move start of range by a line item
               select my_range
             end repeat
           end if
