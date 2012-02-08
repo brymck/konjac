@@ -87,34 +87,38 @@ to import(filename)
 
       -- write if we've moved to a new tag or reached the end of the file
       if text_content is not "" and (tag_index is tag_length or is_new_tag)
-        set current_content to text object of paragraph prev_paragraph_index ¬
-                                 of active document
-        set my_range to create range active document ¬
-                          start (start of content of current_content) ¬
-                          end (end of content of current_content)
-
-        select my_range
-
-        -- FIXME: this is super-ugly
-        if count of paragraphs of selection is greater than 1
+        try
+          set current_content to text object of paragraph prev_paragraph_index ¬
+                                   of active document
           set my_range to create range active document ¬
-                            start (start of content of text object of selection) ¬
-                            end ((end of content of text object of selection) - 1)
+                            start (start of content of current_content) ¬
+                            end (end of content of current_content)
+
           select my_range
-          repeat while (count of paragraphs of selection is greater than 1)
-            selection move start of range by a line item
+
+          -- FIXME: this is super-ugly
+          if count of paragraphs of selection is greater than 1
+            set my_range to create range active document ¬
+                              start (start of content of text object of selection) ¬
+                              end ((end of content of text object of selection) - 1)
+            select my_range
+            repeat while (count of paragraphs of selection is greater than 1)
+              -- maybe?
+              my_range move start of range by a line item
+              select my_range
+            end repeat
+          end if
+
+          repeat while my ends_with_forbidden_character(content of selection as text)
+            set my_range to create range active document ¬
+                              start (start of content of text object of selection) ¬
+                              end ((end of content of text object of selection) - 1)
+            select my_range
           end repeat
-        end if
 
-        repeat while my ends_with_forbidden_character(content of selection as text)
-          set my_range to create range active document ¬
-                            start (start of content of text object of selection) ¬
-                            end ((end of content of text object of selection) - 1)
-          select my_range
-        end repeat
-
-        type text selection text text_content
-        set text_content to ""
+          type text selection text text_content
+          set text_content to ""
+        end try
       end if
     end repeat
   end tell
