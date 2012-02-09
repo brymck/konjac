@@ -14,12 +14,12 @@ module Konjac
         @current = nil
       end
 
-      def tags
-        @tags ||= reload_tags
+      def read(*args)
+        find(*args).get.gsub(@strippable, "").split @delimiter
       end
 
-      def reload_tags
-        Tag.load(path)
+      def tags
+        Tag.load path
       end
 
       def export

@@ -14,6 +14,11 @@ module Konjac
           @application.open path
         end
         
+        # Retrieves the POSIX path of the document
+        def path
+          @path ||= posix_path(@document.full_name.get)
+        end
+
         private
 
         # Converts an HFS (Mac) path to a POSIX path

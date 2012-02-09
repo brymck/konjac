@@ -18,7 +18,6 @@ module Konjac
   autoload :Installer,  "konjac/installer"
   autoload :Language,   "konjac/language"
   autoload :Office,     "konjac/office"
-  autoload :OS,         "konjac/os"
   autoload :Suggestor,  "konjac/suggestor"
   autoload :Translator, "konjac/translator"
   autoload :Utils,      "konjac/utils"

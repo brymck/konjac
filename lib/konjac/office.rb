@@ -2,13 +2,33 @@ module Konjac
   # A singleton for dealing with extracting and importing tags from Microsoft
   # Office documents
   module Office
-    autoload :Generic, "konjac/office/generic"
-    autoload :Mac,     "konjac/office/mac"
-    autoload :Tag,     "konjac/office/tag"
-    autoload :Windows, "konjac/office/windows"
-    autoload :XML,     "konjac/office/windows"
+    autoload :Generic,   "konjac/office/generic"
+    autoload :Mac,       "konjac/office/mac"
+    autoload :OS,        "konjac/office/os"
+    autoload :Tag,       "konjac/office/tag"
+    autoload :Windows,   "konjac/office/windows"
+    autoload :XML,       "konjac/office/windows"
 
     class << self
+      def new(path)
+        if OS.mac?
+          os = Mac
+        elsif OS.windows?
+          os = Windows
+        else
+          return nil 
+        end
+        
+        case File.basename(path)
+        when /\.docx?/
+          os::Word.new(path)
+        when /\.pptx?/
+          os::PowerPoint.new(path)
+        when /\.xlsx?/
+          os::Excel.new(path)
+        end
+      end
+
       # Imports the text content of a tag file into a Microsoft Office document
       def import_tags(files, opts = {})
         sub_files = Utils.parse_files(files)
