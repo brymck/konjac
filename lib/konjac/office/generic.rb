@@ -28,7 +28,9 @@ module Konjac
 
       def import
         tags.each do |tag|
-          write tag.added.join(@delimiter), *tag.indices unless tag.blank?
+          if tag.changed? && !tag.blank?
+            write tag.added.join(@delimiter), *tag.indices
+          end
         end
       end
     end

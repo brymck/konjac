@@ -80,7 +80,7 @@ eos
                 :default => Config.dictionary, :multi => true
               opt :help, I18n.t(:help, :scope => :opts)
             end
-            Office.export_tags ARGV, opts
+            Office.new(ARGV[0]).export
           when "exportxml"
             opts = Trollop::options do
               banner sc_banner % I18n.t(:filenames_arg)
@@ -100,7 +100,7 @@ eos
               opt :output, I18n.t(:output, :scope => :opts), :type => :string
               opt :help, I18n.t(:help, :scope => :opts)
             end
-            Office.import_tags ARGV, opts
+            Office.new(ARGV[0]).import
           when "importxml"
             opts = Trollop::options do
               banner sc_banner % I18n.t(:filenames_arg)

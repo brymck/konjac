@@ -53,13 +53,17 @@ module Konjac
           tags
         end
 
-        def dump(tags, path)
+        def dump(tags, path, opts = {})
           original_path = path.sub(/\.diff$/, "")
-          File.open("#{original_path}.diff", "w") do |file|
-            file.puts "--- #{original_path}"
-            file.puts "+++ #{original_path}"
-            tags.each do |tag|
-              file.puts tag.to_s
+          diff_path     = "#{original_path}.diff"
+          
+          if File.exist?(diff_path) && !opts[:force]
+            File.open(diff_path, "w") do |file|
+              file.puts "--- #{original_path}"
+              file.puts "+++ #{original_path}"
+              tags.each do |tag|
+                file.puts tag.to_s
+              end
             end
           end
         end
