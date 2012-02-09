@@ -11,6 +11,7 @@ ja:
   script_arg: dictionaries|vim
   script_not_found: "スクリプトは見つかりません：%s"
   subcommand: サブコマンド
+  unimplemented_virtual: "Unimplemented virtual method: %s"
   unknown_subcommand: 不明なサブコマンド：%s
   usage: 使い方：
   where_options: "使用可能な[%s]は、以下のとおりです："

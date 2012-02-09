@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "highline"
   s.add_runtime_dependency "i18n"
   s.add_runtime_dependency "nokogiri"
+  s.add_runtime_dependency "rb-appscript"
   s.add_runtime_dependency "sdoc"
   s.add_runtime_dependency "term-ansicolor"
   s.add_runtime_dependency "trollop"
