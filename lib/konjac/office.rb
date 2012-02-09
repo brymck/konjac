@@ -4,6 +4,7 @@ module Konjac
   module Office
     autoload :Generic, "konjac/office/generic"
     autoload :Mac,     "konjac/office/mac"
+    autoload :Tag,     "konjac/office/tag"
     autoload :Windows, "konjac/office/windows"
     autoload :XML,     "konjac/office/windows"
 

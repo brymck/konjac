@@ -20,8 +20,6 @@ module Konjac
   autoload :Office,     "konjac/office"
   autoload :OS,         "konjac/os"
   autoload :Suggestor,  "konjac/suggestor"
-  autoload :Tag,        "konjac/tag"
-  autoload :TagManager, "konjac/tag_manager"
   autoload :Translator, "konjac/translator"
   autoload :Utils,      "konjac/utils"
 

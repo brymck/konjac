@@ -1,3 +1,4 @@
+# coding: utf-8
 module Konjac
   module Office
     module Windows
