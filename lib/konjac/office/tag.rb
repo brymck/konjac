@@ -8,6 +8,7 @@ module Konjac
         @indices = nil
         @removed = []
         @added   = []
+        @type    = nil
       end
 
       def changed?
@@ -22,10 +23,18 @@ module Konjac
         "@@ #{@indices.join(",")} @@\n-#{@removed.join("\n-")}\n+#{@added.join("\n+")}"
       end
 
+      def default?
+        @type.nil?
+      end
+
+      def special?
+        !!@type
+      end
+
       class << self
         TAG_MATCHES = {
           :header  => /^(?:---|\+\+\+)/,
-          :comment => /^\@\@[^@]+\@\@$/,
+          :comment => /^\@\@ ([a-z]*)([\d,]+) \@\@$/i,
           :removed => /^-(.*)/,
           :added   => /^\+(.*)/,
         }
@@ -42,7 +51,8 @@ module Konjac
                 tags << temp
                 temp = Tag.new
               end
-              temp.indices = line.scan(/\d+/).map(&:to_i)
+              temp.indices = $2.scan(/\d+/).map(&:to_i)
+              temp.type    = $1.to_sym unless $1.empty?
             when TAG_MATCHES[:removed]
               temp.removed << $1
             when TAG_MATCHES[:added]

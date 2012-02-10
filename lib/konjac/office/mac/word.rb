@@ -8,6 +8,7 @@ module Konjac
           @strippable = /[\r\n\a]+$/
           @index = 1
           @current = @document.paragraphs[@index]
+          @parse_order = [:paragraph]
         end
 
         # Retrieves the active document and caches it
@@ -15,9 +16,10 @@ module Konjac
           @active_document ||= @application.active_document
         end
 
-        def write(text, paragraph = nil)
-          select paragraph
-          @application.selection.type_text :text => text
+        def write(text, *args)
+          opts = super(args)
+          select opts[:paragraph]
+          @application.selection.type_text :text => opts[:text]
         end
 
         # Creates a dump of the document's data in Tag form
@@ -38,10 +40,11 @@ module Konjac
         end
 
         # Finds the paragraph indicated by the provided index
-        def find(paragraph = nil)
-          unless paragraph.nil?
-            @index = paragraph
-            @current = @document.paragraphs[paragraph]
+        def find(*args)
+          unless args.empty? || args.nil?
+            opts     = parse_args(*args)
+            @index   = opts[:paragraph]
+            @current = @document.paragraphs[opts[:paragraph]]
           end
 
           @current.text_object.content
@@ -67,8 +70,9 @@ module Konjac
 
         # Selects the paragraph indicated by an indicated, or +nil+ to select
         # the current paragraph
-        def select(paragraph = nil)
-          find paragraph
+        def select(*args)
+          opts = parse_args(*args)
+          find opts
           para_start = @current.text_object.start_of_content.get
           para_end   = @current.text_object.end_of_content.get
           range      = active_document.create_range(:start => para_start,

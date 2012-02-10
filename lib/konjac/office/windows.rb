@@ -3,7 +3,7 @@ module Konjac
   module Office
     module Windows
       autoload :Excel,      "konjac/office/windows/excel"
-      autoload :PowerPoint, "konjac/office/windows/powerpoint"
+      autoload :PowerPoint, "konjac/office/windows/power_point"
       autoload :Shared,     "konjac/office/windows/shared"
       autoload :Word,       "konjac/office/windows/word"
     end

@@ -14,8 +14,14 @@ module Konjac
         @current = nil
       end
 
+      # This only does the bare minimum, extracting arguments from
+      # <tt>*args</tt>, so that subclass methods have their parameters parsed
+      def write(text, *args)
+        parse_args *args
+      end
+
       def read(*args)
-        find(*args).get.gsub(@strippable, "").split @delimiter
+        find(parse_args(*args)).get.gsub(@strippable, "").split @delimiter
       end
 
       def tags
@@ -29,9 +35,23 @@ module Konjac
       def import
         tags.each do |tag|
           if tag.changed? && !tag.blank?
-            write tag.added.join(@delimiter), *tag.indices
+            write tag.added.join(@delimiter), tag.type, *tag.indices
           end
         end
+      end
+
+      private
+
+      def parse_args(*args)
+        return nil if args.empty? || args.nil?
+
+        # Extract final argument if it's a hash
+        parsed = args.last.is_a?(Hash) ? args.pop : {}
+
+        # Create hash using @parse_order as keys and args as values, then merge
+        # that with any pre-parsed hashes. Arguments specified via the hash have
+        # priority
+        parsed = Hash[@parse_order.zip(args)].merge(parsed)
       end
     end
   end
