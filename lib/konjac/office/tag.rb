@@ -2,7 +2,7 @@
 module Konjac
   module Office
     class Tag
-      attr_accessor :indices, :removed, :added
+      attr_accessor :indices, :removed, :added, :type
 
       def initialize
         @indices = nil
@@ -11,22 +11,32 @@ module Konjac
         @type    = nil
       end
 
+      # Whether the tag has changed content
       def changed?
         @removed != @added
       end
 
+      # Determines whether the tag is blank, that is, if it has no +indices+ or
+      # both +removed+ and +added+ are empty
       def blank?
         @indices.nil? || (@removed.join.empty? && @added.join.empty?)
       end
 
+      # Converts the tag to a string
       def to_s
-        "@@ #{@indices.join(",")} @@\n-#{@removed.join("\n-")}\n+#{@added.join("\n+")}"
+        <<-eos
+@@ #{@type.nil? ? "" : "#{@type} "}#{@indices.join(",")} @@
+-#{@removed.join("\n-")}
++#{@added.join("\n+")}
+        eos
       end
 
+      # Whether the tag's content if for the default kind of object
       def default?
         @type.nil?
       end
 
+      # Whether the tag's content if for a special kind of object
       def special?
         !!@type
       end
@@ -34,7 +44,7 @@ module Konjac
       class << self
         TAG_MATCHES = {
           :header  => /^(?:---|\+\+\+)/,
-          :comment => /^\@\@ ([a-z]*)([\d,]+) \@\@$/i,
+          :comment => /^\@\@ ([a-z]*) ?([\d, ]+) \@\@$/i,
           :removed => /^-(.*)/,
           :added   => /^\+(.*)/,
         }
@@ -51,8 +61,8 @@ module Konjac
                 tags << temp
                 temp = Tag.new
               end
-              temp.indices = $2.scan(/\d+/).map(&:to_i)
-              temp.type    = $1.to_sym unless $1.empty?
+              temp.type    = $1.to_sym unless $1.nil?
+              temp.indices = $2.scan(/\d+/).map(&:to_i)  # this changes $~
             when TAG_MATCHES[:removed]
               temp.removed << $1
             when TAG_MATCHES[:added]

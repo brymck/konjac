@@ -9,7 +9,6 @@ module Konjac
       def initialize(location = nil)
         @document = open(File.expand_path(location)) unless location.nil?
         @document = active_document
-        @delimiter = "\v"
         @index = 0
         @current = nil
       end
@@ -21,7 +20,8 @@ module Konjac
       end
 
       def read(*args)
-        find(parse_args(*args)).get.gsub(@strippable, "").split @delimiter
+        opts = parse_args(*args)
+        clean find(*opts), (opts.nil? ? nil : opts[:type])
       end
 
       def tags
@@ -35,7 +35,21 @@ module Konjac
       def import
         tags.each do |tag|
           if tag.changed? && !tag.blank?
-            write tag.added.join(@delimiter), tag.type, *tag.indices
+            write tag.added.join(delimiter(tag.type)), *tag.indices,
+              :type => tag.type
+          end
+        end
+      end
+
+      def delimiter(type)
+        if type.nil?
+          "\v"
+        else
+          case type
+          when :shape
+            "\r"
+          else
+            "\n"
           end
         end
       end
@@ -52,6 +66,10 @@ module Konjac
         # that with any pre-parsed hashes. Arguments specified via the hash have
         # priority
         parsed = Hash[@parse_order.zip(args)].merge(parsed)
+      end
+
+      def clean(text, type = nil)
+        text.gsub(@strippable, "").split delimiter(type)
       end
     end
   end

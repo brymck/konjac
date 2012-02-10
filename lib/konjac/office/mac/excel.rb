@@ -55,7 +55,7 @@ module Konjac
             @current = @document.sheets[sheet].rows[row].cells[cell]
           end
 
-          @current.formula
+          @current.formula.get
         end
 
         # Retrieves the number of cells in the document. Note that this method
@@ -68,32 +68,6 @@ module Konjac
           end
         end
         alias :length :size
-
-        # Goes to the next paragraph
-        def succ
-          @index  += 1
-          @current = @current.next_paragraph
-        rescue
-          nil
-        end
-        alias :next :succ
-
-        # Selects the paragraph indicated by an indicated, or +nil+ to select
-        # the current paragraph
-        def select(paragraph_index = nil)
-          find paragraph_index
-          para_start = @current.text_object.start_of_content.get
-          para_end   = @current.text_object.end_of_content.get
-          range      = active_document.create_range(:start => para_start,
-                                                    :end_ => para_end)
-
-          # Move in end of range by length of stripped content less end of table
-          # mark
-          strip_size = range.content.get[@strippable].gsub(/\a/, "").size
-          range      = active_document.create_range(:start => para_start,
-                                                    :end_ => para_end - strip_size)
-          range.select
-        end
       end
     end
   end
