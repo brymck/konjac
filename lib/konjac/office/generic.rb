@@ -21,7 +21,7 @@ module Konjac
 
       def read(*args)
         opts = parse_args(*args)
-        clean find(*opts), (opts.nil? ? nil : opts[:type])
+        clean find(opts), (opts.nil? ? nil : opts[:type])
       end
 
       def tags

@@ -18,8 +18,9 @@ module Konjac
 
         def write(text, *args)
           opts = super(text, *args)
-          if opts[:type].nil?
-            select *opts
+          puts opts.pretty_inspect
+          if opts[:type].nil? || opts[:type].empty?
+            select opts
             @application.selection.type_text :text => text
           else
             @document.shapes[opts[:paragraph]].text_frame.text_range.content.set text
@@ -61,8 +62,8 @@ module Konjac
         # Finds the paragraph indicated by the provided index
         def find(*args)
           unless args.empty? || args.nil?
-            opts     = parse_args(*args)
-            if opts[:type].nil?
+            opts = parse_args(*args)
+            if opts[:type].nil? && !opts[:paragraph].nil?
               @index   = opts[:paragraph]
               @current = @document.paragraphs[opts[:paragraph]]
             elsif opts[:type] == :shape

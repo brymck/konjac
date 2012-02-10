@@ -7,6 +7,7 @@ module Konjac
           super "Microsoft Excel", path
           @strippable = //
           @delimiter = "\r"
+          @parse_order = [:sheet, :row, :cell]
           find 1, 1, 1
         end
 
@@ -19,8 +20,10 @@ module Konjac
           if args.empty?
             @current.formula.set text
           else
-            sheet, row, cell = args
-            @document.sheets[sheet].rows[row].cells[cell].formula.set text
+            opts = parse_args(*args)
+            @document.sheets[opts[:sheet]]
+                     .rows[opts[:row]]
+                     .cells[opts[:cell]].formula.set text
           end
         end
 
@@ -29,17 +32,10 @@ module Konjac
           tags = []
           @document.sheets.get.each_with_index do |sheet, s|
             sheet.used_range.rows.get.each_with_index do |row, r|
-              # Retry at 0 because the interface with Excel with offering the
-              # initial rows and columns twice, once at an index of 0 and once
-              # at an index of 1
-              next if r == 0
-
               row.cells.get.each_with_index do |cell, c|
-                next if c == 0
-
                 temp = Tag.new
-                temp.indices = [s, r, c]
-                temp.removed = temp.added = read(s, r, c)
+                temp.indices = [s + 1, r + 1, c + 1]
+                temp.removed = temp.added = read(s + 1, r + 1, c + 1)
                 tags << temp unless temp.blank?
               end
             end
@@ -51,8 +47,10 @@ module Konjac
         def find(*args)
           unless args.empty?
             @indices = args
-            sheet, row, cell = args
-            @current = @document.sheets[sheet].rows[row].cells[cell]
+            opts = parse_args(*args)
+            @current = @document.sheets[opts[:sheet]]
+                                .rows[opts[:row]]
+                                .cells[opts[:cell]]
           end
 
           @current.formula.get

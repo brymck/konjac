@@ -77,13 +77,11 @@ module Konjac
           original_path = path.sub(/\.diff$/, "")
           diff_path     = "#{original_path}.diff"
           
-          if File.exist?(diff_path) && !opts[:force]
-            File.open(diff_path, "w") do |file|
-              file.puts "--- #{original_path}"
-              file.puts "+++ #{original_path}"
-              tags.each do |tag|
-                file.puts tag.to_s
-              end
+          File.open(diff_path, "w") do |file|
+            file.puts "--- #{original_path}"
+            file.puts "+++ #{original_path}"
+            tags.each do |tag|
+              file.puts tag.to_s
             end
           end
         end
