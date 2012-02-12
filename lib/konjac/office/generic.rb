@@ -49,7 +49,7 @@ module Konjac
           when :shape
             "\r"
           else
-            "\n"
+            "\v"
           end
         end
       end
