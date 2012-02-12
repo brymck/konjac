@@ -17,13 +17,17 @@ module Konjac
         end
 
         def write(text, *args)
-          if args.empty?
+          opts = super(text, *args)
+          if opts.map(&:last).all?(&:nil?)
             @current.formula.set text
-          else
+          elsif opts[:type].nil? || opts[:type].empty?
             opts = parse_args(*args)
             @document.sheets[opts[:sheet]]
                      .rows[opts[:row]]
                      .cells[opts[:cell]].formula.set text
+          else
+            @document.sheets[opts[:sheet]]
+                     .shapes[opts[:row]].text_frame.characters.content.set text
           end
         end
 
@@ -39,18 +43,35 @@ module Konjac
                 tags << temp unless temp.blank?
               end
             end
+
+            # TODO: I should optimize this later like above, to prevent large
+            # shapes from getting out of hand
+            sheet.shapes.get.each_with_index do |shape, index|
+              temp = Tag.new
+              temp.indices = [s + 1, index + 1]
+              temp.removed = temp.added =
+                clean(shape.text_frame.characters.content.get, :shape)
+              temp.type = :shape
+              tags << temp unless temp.blank?
+            end rescue NoMethodError  # ignore sheets without shapes
           end
           tags
         end
 
         # Finds the paragraph indicated by the provided index
+        # TODO: Clean up the second unless statement
         def find(*args)
-          unless args.empty?
-            @indices = args
+          unless args.empty? || args.nil?
             opts = parse_args(*args)
-            @current = @document.sheets[opts[:sheet]]
-                                .rows[opts[:row]]
-                                .cells[opts[:cell]]
+            if (opts[:type].nil? || opts[:type].empty?) && !opts.map(&:last).all?(&:nil?)
+              @index   = [opts[:sheet], opts[:row], opts[:cell]]
+              @current = @document.sheets[opts[:sheet]]
+                                  .rows[opts[:row]]
+                                  .cells[opts[:cell]]
+            elsif opts[:type] == :shape
+              return @document.sheets[opts[:sheet]]
+                              .shapes[opts[:row]].text_frame.characters.content.get
+            end
           end
 
           @current.formula.get
@@ -60,7 +81,7 @@ module Konjac
         # fetches all row and column elements and can thus be very expensive for
         # large spreadsheets.
         def size
-          @document.sheets.inject(0) do |result, sheet|
+          @document.sheets.get.inject(0) do |result, sheet|
             range   = sheet.used_range 
             result += range.rows.get.size * range.columns.get.size
           end
@@ -70,4 +91,3 @@ module Konjac
     end
   end
 end
-

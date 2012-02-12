@@ -41,15 +41,16 @@ module Konjac
         end
       end
 
+      # Provides the delimiters used for Word documents
       def delimiter(type)
         if type.nil?
-          "\v"
+          "\r"
         else
           case type
           when :shape
-            "\r"
-          else
             "\v"
+          else
+            "\r"
           end
         end
       end

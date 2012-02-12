@@ -50,7 +50,7 @@ module Konjac
             temp = Tag.new
             temp.indices = [index + 1]
             temp.removed = temp.added =
-              clean(shape.text_frame.text_range.content.get)
+              clean(shape.text_frame.text_range.content.get, :shape)
             temp.type = :shape
             tags << temp unless temp.blank?
           end
@@ -90,6 +90,20 @@ module Konjac
           nil
         end
         alias :next :succ
+
+        # Provides the delimiters used for Word documents
+        def delimiter(type)
+          if type.nil?
+            "\v"
+          else
+            case type
+            when :shape
+              "\r"
+            else
+              "\v"
+            end
+          end
+        end
 
         # Selects the paragraph indicated by an indicated, or +nil+ to select
         # the current paragraph

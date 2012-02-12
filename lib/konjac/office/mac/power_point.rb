@@ -6,7 +6,6 @@ module Konjac
         def initialize(path = nil)
           super "Microsoft PowerPoint", path
           @strippable = //
-          @delimiter = "\r"
           @parse_order = [:slide, :shape]
           find 1, 1
         end
@@ -42,11 +41,13 @@ module Konjac
 
         # Finds the paragraph indicated by the provided index
         def find(*args)
-          unless args.empty?
+          unless args.empty? || args.nil?
             @indices = args
             opts = parse_args(*args)
-            @current = @document.slides[opts[:slide]]
-                                .shapes[opts[:shape]]
+            unless opts.map(&:last).all?(&:nil?)
+              @current = @document.slides[opts[:slide]]
+                                  .shapes[opts[:shape]]
+            end
           end
 
           @current.text_frame.text_range.content.get
