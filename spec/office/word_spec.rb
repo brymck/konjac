@@ -62,6 +62,7 @@ describe "Word", :word do
       @path = File.join(@spec_path, "bin", "sample.docx")
       @diff_path = "#{@path}.diff"
       @doc = Office.word(@path)
+      @original_size = @doc.size
     end
 
     after :all do
@@ -119,6 +120,10 @@ describe "Word", :word do
           tag_part.should == lines.shift
         end
       end
+    end
+
+    it "should not have any change in size" do
+      @doc.size.should == @original_size
     end
   end
 end
