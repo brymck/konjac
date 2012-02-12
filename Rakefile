@@ -20,7 +20,7 @@ namespace :spec do
   end
 
   desc "Run all specs"
-  task :all => [:excel, :power_point, :word]
+  task :all => ["spec", :excel, :power_point, :word]
 end
 
 desc "Run specs"
