@@ -13,6 +13,21 @@ module Konjac
         def open(path)
           @application.open path
         end
+
+        # Closes the document. If <tt>:saving</tt> is set to +true+ the document
+        # will be saved first. If it's set to +false+ the document will not be
+        # saved.
+        def close(opts = {})
+          opts[:saving] = case opts[:saving]
+                          when true
+                            :yes
+                          when false
+                            :no
+                          else
+                            nil
+                          end
+          @document.close :saving => opts[:saving]
+        end
         
         # Retrieves the POSIX path of the document
         def path
