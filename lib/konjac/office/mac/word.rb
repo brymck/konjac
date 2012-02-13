@@ -9,6 +9,7 @@ module Konjac
           @index = 1
           @current = @document.paragraphs[@index]
           @parse_order = [:paragraph]
+          @content_path = [:text_object, :content]
         end
 
         # Retrieves the active document and caches it

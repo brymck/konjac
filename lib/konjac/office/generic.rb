@@ -4,6 +4,8 @@ module Konjac
     # This is a basic class that contains all the methods that are universal
     # across OSes, file formats, applications, etc.
     class Generic
+      autoload :Item, "konjac/office/item"
+
       attr_reader :document, :index, :current
 
       def initialize(location = nil)
@@ -11,6 +13,12 @@ module Konjac
         @document = active_document
         @index = 0
         @current = nil
+      end
+
+      def [](*args)
+        opts = parse_args(*args)
+
+        Item.new(opts, @document, @parse_order, @content_path, @read_method, @write_method)
       end
 
       # This only does the bare minimum, extracting arguments from

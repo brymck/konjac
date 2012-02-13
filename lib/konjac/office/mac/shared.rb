@@ -6,7 +6,9 @@ module Konjac
     module Mac
       class Shared < Generic
         def initialize(app_name, path = nil)
-          @application = Appscript.app(app_name)
+          @application  = Appscript.app(app_name)
+          @read_method  = :get
+          @write_method = :set
           super path
         end
 
