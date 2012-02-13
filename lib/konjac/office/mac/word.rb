@@ -3,75 +3,82 @@ module Konjac
   module Office
     module Mac
       class Word < Shared
+        class WordItem < Item
+          def write(text)
+            para_start = @ref.text_object.start_of_content.get
+            para_end   = @ref.text_object.end_of_content.get
+            range      = @opts[:document].create_range(:start => para_start,
+                                                       :end_ => para_end - 1)
+            range.select
+            @opts[:application].selection.type_text :text => text
+          end
+        end
+
         def initialize(path = nil)
           super "Microsoft Word", path
-          @strippable = /[\r\n\a]+$/
           @index = 1
           @current = @document.paragraphs[@index]
-          @parse_order = [:paragraph]
-          @content_path = [:text_object, :content]
+          @item_opts.merge!({
+            :ref_path     => [:paragraph],
+            :content_path => [:text_object, :content],
+            :strippable   => /[\r\n\a]+$/
+          })
+          @shape_opts.merge!({
+            :ref_path     => [:shape],
+            :content_path => [:text_frame, :text_range, :content],
+            :strippable   => /[\r\n\a]+$/
+          })
         end
+
+        # This overrides the Base#[] method because we need to have a slightly
+        # modified version of the Item object to enable the selection of
+        # paragraph text before writing to it
+        def [](*args)
+          opts = parse_args(*args)
+          if opts[:type].nil? || opts[:type].empty?
+            WordItem.new @item_opts.merge(opts)
+          else
+            shape_at opts
+          end
+        end
+        alias :item_at :[]
 
         # Retrieves the active document and caches it
         def active_document
           @active_document ||= @application.active_document
         end
 
-        def write(text, *args)
-          opts = super(text, *args)
-          if opts[:type].nil? || opts[:type].empty?
-            select opts
-            @application.selection.type_text :text => text
-          else
-            @document.shapes[opts[:paragraph]].text_frame.text_range.content.set text
-          end
-        end
-
         # Creates a dump of the document's data in Tag form
         def data
-          @index = 1
-          @current = @document.paragraphs[@index]
-
+          i = 1
           tags = []
-
-          # An open-ended loop is necessary because requesting a paragraphs
-          # enumerator will retrieve all paragraphs from the document,
-          # potentially consuming a large amount of memory and freezing Word
-          loop do
-            temp = Tag.new
-            temp.indices = [@index]
-            temp.removed = temp.added = read
-            tags << temp unless temp.blank?
-            break if succ.nil?
+          begin
+            loop do
+              temp = Tag.new
+              temp.indices = [i]
+              temp.removed = temp.added = item_at(i).read
+              tags << temp unless temp.blank?
+              i += 1
+            end
+          rescue Appscript::CommandError
           end
 
           # TODO: I should optimize this later like above, to prevent large
           # shapes from getting out of hand
-          @document.shapes.get.each_with_index do |shape, index|
-            temp = Tag.new
-            temp.indices = [index + 1]
-            temp.removed = temp.added =
-              clean(shape.text_frame.text_range.content.get, :shape)
-            temp.type = :shape
-            tags << temp unless temp.blank?
+          i = 1
+          begin
+            loop do
+              temp = Tag.new
+              temp.indices = [i]
+              temp.removed = temp.added = shape_at(i).read
+              temp.type = :shape
+              tags << temp unless temp.blank?
+              i += 1
+            end
+          rescue Appscript::CommandError, TypeError
           end
 
           tags
-        end
-
-        # Finds the paragraph indicated by the provided index
-        def find(*args)
-          unless args.empty? || args.nil?
-            opts = parse_args(*args)
-            if (opts[:type].nil? || opts[:type].empty?) && !opts[:paragraph].nil?
-              @index   = opts[:paragraph]
-              @current = @document.paragraphs[opts[:paragraph]]
-            elsif opts[:type] == :shape
-              return @document.shapes[opts[:paragraph]].text_frame.text_range.content.get
-            end
-          end
-
-          @current.text_object.content.get
         end
 
         # Retrieves the number of paragraphs in the document. Note that this
@@ -91,38 +98,6 @@ module Konjac
           nil
         end
         alias :next :succ
-
-        # Provides the delimiters used for Word documents
-        def delimiter(type)
-          if type.nil?
-            "\v"
-          else
-            case type
-            when :shape
-              "\r"
-            else
-              "\v"
-            end
-          end
-        end
-
-        # Selects the paragraph indicated by an indicated, or +nil+ to select
-        # the current paragraph
-        def select(*args)
-          opts = parse_args(*args)
-          find opts
-          para_start = @current.text_object.start_of_content.get
-          para_end   = @current.text_object.end_of_content.get
-          range      = active_document.create_range(:start => para_start,
-                                                    :end_ => para_end)
-
-          # Move in end of range by length of stripped content less end of table
-          # mark
-          strip_size = range.content.get[@strippable].gsub(/\a/, "").size
-          range      = active_document.create_range(:start => para_start,
-                                                    :end_ => para_end - strip_size)
-          range.select
-        end
       end
     end
   end

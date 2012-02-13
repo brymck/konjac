@@ -3,13 +3,11 @@ module Konjac
   module Office
     class Generic
       class Item
-        def initialize(opts, document, ref_path, content_path, read_method, write_method)
-          @content_path = content_path
-          @read_method  = read_method
-          @write_method = write_method
+        def initialize(opts = {})
+          @opts = opts
 
-          item = document
-          ref_path.each do |node|
+          item = @opts[:document]
+          @opts[:ref_path].each do |node|
             item = item.send(pluralize(node))[opts[node]]
           end
           @ref = item
@@ -19,18 +17,18 @@ module Konjac
           return @content unless @content.nil?
 
           @content = @ref
-          @content_path.each do |node|
+          @opts[:content_path].each do |node|
             @content = @content.send(node)
           end
           @content
         end
 
         def read
-          content.send @read_method
+          clean content.send(@opts[:read])
         end
 
         def write(text)
-          content.send @write_method, text
+          content.send @opts[:write], text
         end
 
         private
@@ -40,6 +38,10 @@ module Konjac
         # use case arises
         def pluralize(text)
           "#{text.to_s}s"
+        end
+
+        def clean(text)
+          text.gsub(@opts[:strippable], "").split(@opts[:delimiter])
         end
       end
     end

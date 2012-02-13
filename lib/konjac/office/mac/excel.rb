@@ -8,27 +8,21 @@ module Konjac
           @strippable = //
           @delimiter = "\r"
           @parse_order = [:sheet, :row, :cell]
-          find 1, 1, 1
+          @item_opts.merge!({
+            :ref_path     => [:paragraph],
+            :content_path => [:text_object, :content],
+            :strippable   => /[\r\n\a]+$/
+          })
+          @shape_opts.merge!({
+            :ref_path     => [:shape],
+            :content_path => [:text_frame, :text_range, :content],
+            :strippable   => /[\r\n\a]+$/
+          })
         end
 
         # Retrieves the active document and caches it
         def active_document
           @active_document ||= @application.active_workbook
-        end
-
-        def write(text, *args)
-          opts = super(text, *args)
-          if opts.map(&:last).all?(&:nil?)
-            @current.formula.set text
-          elsif opts[:type].nil? || opts[:type].empty?
-            opts = parse_args(*args)
-            @document.sheets[opts[:sheet]]
-                     .rows[opts[:row]]
-                     .cells[opts[:cell]].formula.set text
-          else
-            @document.sheets[opts[:sheet]]
-                     .shapes[opts[:row]].text_frame.characters.content.set text
-          end
         end
 
         # Creates a dump of the spreadsheet's data in Tag form
@@ -56,25 +50,6 @@ module Konjac
             end rescue NoMethodError  # ignore sheets without shapes
           end
           tags
-        end
-
-        # Finds the paragraph indicated by the provided index
-        # TODO: Clean up the second unless statement
-        def find(*args)
-          unless args.empty? || args.nil?
-            opts = parse_args(*args)
-            if (opts[:type].nil? || opts[:type].empty?) && !opts.map(&:last).all?(&:nil?)
-              @index   = [opts[:sheet], opts[:row], opts[:cell]]
-              @current = @document.sheets[opts[:sheet]]
-                                  .rows[opts[:row]]
-                                  .cells[opts[:cell]]
-            elsif opts[:type] == :shape
-              return @document.sheets[opts[:sheet]]
-                              .shapes[opts[:row]].text_frame.characters.content.get
-            end
-          end
-
-          @current.formula.get
         end
 
         # Retrieves the number of cells in the document. Note that this method

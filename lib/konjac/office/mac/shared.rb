@@ -7,9 +7,15 @@ module Konjac
       class Shared < Generic
         def initialize(app_name, path = nil)
           @application  = Appscript.app(app_name)
-          @read_method  = :get
-          @write_method = :set
           super path
+          @item_opts.merge!({
+            :read  => :get,
+            :write => :set
+          })
+          @shape_opts.merge!({
+            :read  => :get,
+            :write => :set
+          })
         end
 
         def open(path)

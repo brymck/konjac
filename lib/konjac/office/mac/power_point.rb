@@ -7,22 +7,17 @@ module Konjac
           super "Microsoft PowerPoint", path
           @strippable = //
           @parse_order = [:slide, :shape]
-          find 1, 1
+          @item_opts.merge!({
+            :ref_path     => [:slide, :shape]
+            :content_path => [:text_frame, :text_range, :content],
+            :strippable   => //
+          })
+          @shape_opts = @item_opts
         end
 
         # Retrieves the active document and caches it
         def active_document
           @active_document ||= @application.active_presentation
-        end
-
-        def write(text, *args)
-          if args.empty?
-            @current.text_frame.text_range.content.set text
-          else
-            opts = parse_args(*args)
-            @document.slides[opts[:slide]]
-                     .shapes[opts[:shape]].text_frame.text_range.content.set text
-          end
         end
 
         # Creates a dump of the spreadsheet's data in Tag form
@@ -39,30 +34,12 @@ module Konjac
           tags
         end
 
-        # Finds the paragraph indicated by the provided index
-        def find(*args)
-          unless args.empty? || args.nil?
-            @indices = args
-            opts = parse_args(*args)
-            unless opts.map(&:last).all?(&:nil?)
-              @current = @document.slides[opts[:slide]]
-                                  .shapes[opts[:shape]]
-            end
-          end
-
-          @current.text_frame.text_range.content.get
-        end
-
         # Retrieves the number of cells in the document. Note that this method
         # fetches all row and column elements and can thus be very expensive for
         # large spreadsheets.
         def size
         end
         alias :length :size
-
-        def delimiter(type = nil)
-          "\r"
-        end
       end
     end
   end

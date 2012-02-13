@@ -11,25 +11,44 @@ module Konjac
       def initialize(location = nil)
         @document = open(File.expand_path(location)) unless location.nil?
         @document = active_document
+        @item_opts = {
+          :application => @application,
+          :document    => @document,
+          :delimiter   => "\r"
+        }
+        @shape_opts = {
+          :application => @application,
+          :document    => @document,
+          :delimiter   => "\v"
+        }
         @index = 0
         @current = nil
       end
 
       def [](*args)
         opts = parse_args(*args)
+        return shape_at(opts) if opts[:type] == :shape
 
-        Item.new(opts, @document, @parse_order, @content_path, @read_method, @write_method)
+        Item.new @item_opts.merge(opts)
+      end
+      alias :item_at :[]
+
+      def []=(*args)
+        write args.pop, *args
       end
 
-      # This only does the bare minimum, extracting arguments from
-      # <tt>*args</tt>, so that subclass methods have their parameters parsed
+      def shape_at(*args)
+        opts = parse_args(*args, :type => :shape)
+
+        Item.new @shape_opts.merge(opts)
+      end
+
       def write(text, *args)
-        parse_args *args
+        item_at(*args).write text
       end
 
       def read(*args)
-        opts = parse_args(*args)
-        clean find(opts), (opts.nil? ? nil : opts[:type])
+        item_at(*args).read
       end
 
       def tags
@@ -49,20 +68,6 @@ module Konjac
         end
       end
 
-      # Provides the delimiters used for Word documents
-      def delimiter(type)
-        if type.nil?
-          "\r"
-        else
-          case type
-          when :shape
-            "\v"
-          else
-            "\r"
-          end
-        end
-      end
-
       private
 
       def parse_args(*args)
@@ -71,14 +76,18 @@ module Konjac
         # Extract final argument if it's a hash
         parsed = args.last.is_a?(Hash) ? args.pop : {}
 
-        # Create hash using @parse_order as keys and args as values, then merge
-        # that with any pre-parsed hashes. Arguments specified via the hash have
-        # priority
-        parsed = Hash[@parse_order.zip(args)].merge(parsed)
+        if parsed[:type] == :shape
+          # Create hash using @parse_order as keys and args as values, then merge
+          # that with any pre-parsed hashes. Arguments specified via the hash have
+          # priority
+          parsed = Hash[@shape_opts[:ref_path].zip(args)].merge(parsed)
+        else
+          parsed = Hash[@item_opts[:ref_path].zip(args)].merge(parsed)
+        end
       end
 
-      def clean(text, type = nil)
-        text.gsub(@strippable, "").split delimiter(type)
+      def clean(text, opts)
+
       end
     end
   end
