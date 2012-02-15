@@ -38,8 +38,9 @@ module Konjac
       end
 
       def shape_at(*args)
-        opts = parse_args(*args, :type => :shape)
-
+        last_item = args.last
+        last_item = { :type => :shape }.merge(last_item) if last_item.is_a?(Hash)
+        opts = parse_args(*args)
         Item.new @shape_opts.merge(opts)
       end
 
@@ -62,8 +63,12 @@ module Konjac
       def import
         tags.each do |tag|
           if tag.changed? && !tag.blank?
-            write tag.added.join(delimiter(tag.type)), *tag.indices,
-              :type => tag.type
+            if tag.type == :shape
+              added = tag.added.join(@shape_opts[:delimiter])
+            else
+              added = tag.added.join(@item_opts[:delimiter])
+            end
+            write added, *tag.indices, :type => tag.type
           end
         end
       end

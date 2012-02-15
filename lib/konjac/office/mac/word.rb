@@ -21,6 +21,7 @@ module Konjac
           @item_opts.merge!({
             :ref_path     => [:paragraph],
             :content_path => [:text_object, :content],
+            :delimiter    => "\v",
             :strippable   => /[\r\n\a]+$/
           })
           @shape_opts.merge!({
