@@ -41,7 +41,7 @@ describe "PowerPoint", :power_point do
     end
 
     it "should open the test document" do
-      @deck.read.should == ["Title"]
+      @deck.should_not be_nil
     end
 
     it "should return the same path" do
@@ -70,7 +70,6 @@ describe "PowerPoint", :power_point do
 
     it "should import all tags correctly" do
       @export_target.rewind
-      @deck.find 1, 1, 1
       index = 0
       lines = []
       File.open(@diff_path, "w") do |file|

@@ -8,7 +8,7 @@ module Konjac
           @strippable = //
           @parse_order = [:slide, :shape]
           @item_opts.merge!({
-            :ref_path     => [:slide, :shape]
+            :ref_path     => [:slide, :shape],
             :content_path => [:text_frame, :text_range, :content],
             :strippable   => //
           })

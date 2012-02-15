@@ -7,15 +7,14 @@ module Konjac
           super "Microsoft Excel", path
           @strippable = //
           @delimiter = "\r"
-          @parse_order = [:sheet, :row, :cell]
           @item_opts.merge!({
-            :ref_path     => [:paragraph],
-            :content_path => [:text_object, :content],
+            :ref_path     => [:sheet, :row, :cell],
+            :content_path => [:formula],
             :strippable   => /[\r\n\a]+$/
           })
           @shape_opts.merge!({
-            :ref_path     => [:shape],
-            :content_path => [:text_frame, :text_range, :content],
+            :ref_path     => [:sheet, :shape],
+            :content_path => [:text_frame, :characters, :content],
             :strippable   => /[\r\n\a]+$/
           })
         end

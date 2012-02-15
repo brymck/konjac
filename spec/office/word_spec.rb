@@ -66,7 +66,7 @@ describe "Word", :word do
     end
 
     after :all do
-      # @doc.close :saving => false
+      @doc.close :saving => false
     end
 
     it "should open the test document" do
