@@ -2,8 +2,16 @@
 module Konjac
   module Office
     module Mac
+      # Word for Mac
       class Word < Shared
+        # A basic class to deal with Word's ridiculously awful handling
+        # of replacing text in paragraphs.  Instead of simply setting the
+        # paragraph's text to something new, you have to select all but the last
+        # character (which is a newline) then write.  Otherwise, your paragraph
+        # might inherit the formatting of the line below it, which is especially
+        # a problem with tables.
         class WordItem < Item
+          # Writes to a Word item
           def write(text)
             para_start = @ref.text_object.start_of_content.get
             para_end   = @ref.text_object.end_of_content.get
@@ -14,10 +22,9 @@ module Konjac
           end
         end
 
+        # Creates a new Word item
         def initialize(path = nil)
           super "Microsoft Word", path
-          @index = 1
-          @current = @document.paragraphs[@index]
           @item_opts.merge!({
             :ref_path     => [:paragraph],
             :content_path => [:text_object, :content],
@@ -89,16 +96,6 @@ module Konjac
           @document.paragraphs.get.size
         end
         alias :length :size
-
-        # Goes to the next paragraph
-        def succ
-          @index  += 1
-          @current = @current.next_paragraph
-        rescue
-          @index  -= 1
-          nil
-        end
-        alias :next :succ
       end
     end
   end

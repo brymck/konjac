@@ -2,7 +2,9 @@
 module Konjac
   module Office
     module Mac
+      # Excel for Mac
       class Excel < Shared
+        # Creates a new Excel object
         def initialize(path = nil)
           super "Microsoft Excel", path
           @strippable = //

@@ -1,6 +1,8 @@
 # coding: utf-8
 module Konjac
   module Office
+    # Specialized XML handling for with the Office Open XML-based formats in
+    # Office 2007+
     module XML
       # Imports the text content of a tag file into a Word 2003+, utilizing a
       # cleaned-up version of the document's original XML structure

@@ -1,7 +1,8 @@
 # coding: utf-8
 module Konjac
   module Office
-    module xml
+    # The XML (Open Office XML, that is) namespace
+    module XML
       autoload :Excel,      "konjac/office/xml/excel"
       autoload :PowerPoint, "konjac/office/xml/powerpoint"
       autoload :Shared,     "konjac/office/xml/shared"

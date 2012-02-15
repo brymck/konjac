@@ -2,7 +2,9 @@
 module Konjac
   module Office
     module Mac
+      # PowerPoint for Mac
       class PowerPoint < Shared
+        # Creates a new PowerPoint object
         def initialize(path = nil)
           super "Microsoft PowerPoint", path
           @strippable = //

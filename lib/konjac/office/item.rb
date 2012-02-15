@@ -2,7 +2,13 @@
 module Konjac
   module Office
     class Base
+      # An item class dealing with hierarchy in which to search the
+      # document. For example, with Word it will search paragraphs and for
+      # PowerPoint it will search slides then shapes.  This class then will
+      # follow the hierarchy to text objects and is capable of reading from and
+      # writing to them.
       class Item
+        # Creates a new Item
         def initialize(opts = {})
           @opts = opts
 
@@ -13,6 +19,9 @@ module Konjac
           @ref = item
         end
 
+        # Retrieves the content from the Item. Note that without getter or
+        # setter methods this may not actually retrieve anything but the message
+        # we intend to send to the scripting interface.
         def content
           return @content unless @content.nil?
 
@@ -23,10 +32,13 @@ module Konjac
           @content
         end
 
+        # Reads the item's text content, cleaned up according to the supplied
+        # delimiters and strippable items
         def read
           clean content.send(@opts[:read])
         end
 
+        # Writes to the item
         def write(text)
           content.send @opts[:write], text
         end

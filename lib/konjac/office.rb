@@ -12,6 +12,18 @@ module Konjac
   # following will work too:
   #
   #   doc = Konjac::Office.word
+  #
+  # From there, you can send some basic reading and writing instructions to the
+  # document:
+  #
+  #   doc.read 1
+  #   doc.read :paragraph => 1
+  #   doc.read 1, :type => :shape
+  #
+  #   doc.write "First paragraph", 1
+  #
+  #   doc.export
+  #   doc.import
   module Office
     autoload :Base,    "konjac/office/base"
     autoload :Mac,     "konjac/office/mac"
@@ -21,6 +33,10 @@ module Konjac
     autoload :XML,     "konjac/office/windows"
 
     class << self
+      # Creates a new object inheriting from Base. The application chosen is
+      # based on the user's environment and the type of the document. For
+      # example, a file with a .docx extension will default to Microsoft Word,
+      # and on OSX it will default to Konjac::Office::Mac::Word
       def new(path)
         env = environment
         return nil if env.nil?
@@ -35,6 +51,10 @@ module Konjac
         end
       end
 
+      # The user's environment. Currently, this just detects whether an OS is
+      # Windows, Mac or other (simply because Microsoft Office is unavailable
+      # on Linux, so scripting something like LibreOffice or OpenOffice is more
+      # long-term).
       def environment
         if OS.mac?
           Mac
@@ -47,6 +67,18 @@ module Konjac
 
       private
 
+      # If possible, retrieves the appropriate class inheriting from Office::Base for the user
+      # based on his environment or OS. For example, if a user types
+      #
+      #   doc = Konjac::Office.word
+      #
+      # on Mac that will be the same thing as a call to
+      #
+      #   doc = Konjac::Mac::Office.new
+      #
+      # whereas for a user on Windows it will be equivalent to
+      #
+      #   doc = Konjac::Windows::Office.new
       def method_missing(name, *args, &block)
         env = environment
         return super if env.nil?
@@ -58,6 +90,8 @@ module Konjac
         end
       end
 
+      # A list of valid environments based on the directories in the
+      # lib/konjac/office folder of this gem
       def valid_environments
         return @environments unless @environments.nil?
 
@@ -71,6 +105,7 @@ module Konjac
         @environments
       end
 
+      # Converts snake_case into CamelCase
       def camelize(lower_case_and_underscored_word, first_letter_in_uppercase = true)
         if first_letter_in_uppercase
           lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
@@ -79,6 +114,7 @@ module Konjac
         end
       end
 
+      # Converts CamelCase into snake_case
       def underscore(camel_cased_word)
         camel_cased_word.to_s.gsub(/::/, '/').
           gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').

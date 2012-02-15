@@ -4,7 +4,9 @@ require "appscript"
 module Konjac
   module Office
     module Mac
+      # Inherits from Base and adds some shared methods to the Mac interface 
       class Shared < Base
+        # Creates a new Shared object
         def initialize(app_name, path = nil)
           @application  = Appscript.app(app_name)
           super path
@@ -18,6 +20,7 @@ module Konjac
           })
         end
 
+        # Open the document at the supplied +path+ using the current application
         def open(path)
           @application.open path
         end

@@ -1,9 +1,22 @@
 # coding: utf-8
 module Konjac
   module Office
+    # A tag item, used to export and import data to and from the document
     class Tag
-      attr_accessor :indices, :removed, :added, :type
+      # The indices used to scan the document's hierarchy to reach the item
+      attr_accessor :indices
+      
+      # The text that has been removed
+      attr_accessor :removed
+      
+      # The text with which to replaced the removed content
+      attr_accessor :added
+      
+      # The type, used to identify special objects such as a
+      # <tt>:shape</tt>. Defaults to +nil+.
+      attr_accessor :type
 
+      # Creates a new tag item
       def initialize
         @indices = nil
         @removed = []
@@ -42,6 +55,8 @@ module Konjac
       end
 
       class << self
+        # A list of regular expressions for parsing a document in unified
+        # diff-esque style into Tags
         TAG_MATCHES = {
           :header  => /^(?:---|\+\+\+)/,
           :comment => /^\@\@ ([a-z]*) ?([\d, ]+) \@\@$/i,
@@ -73,6 +88,8 @@ module Konjac
           tags
         end
 
+        # Dumps the tags into a .diff document with the same name as the
+        # document from which those tags were extracted
         def dump(tags, path, opts = {})
           original_path = path.sub(/\.diff$/, "")
           diff_path     = "#{original_path}.diff"
