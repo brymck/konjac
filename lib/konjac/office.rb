@@ -13,12 +13,12 @@ module Konjac
   #
   #   doc = Konjac::Office.word
   module Office
-    autoload :Generic,   "konjac/office/generic"
-    autoload :Mac,       "konjac/office/mac"
-    autoload :OS,        "konjac/office/os"
-    autoload :Tag,       "konjac/office/tag"
-    autoload :Windows,   "konjac/office/windows"
-    autoload :XML,       "konjac/office/windows"
+    autoload :Base,    "konjac/office/base"
+    autoload :Mac,     "konjac/office/mac"
+    autoload :OS,      "konjac/office/os"
+    autoload :Tag,     "konjac/office/tag"
+    autoload :Windows, "konjac/office/windows"
+    autoload :XML,     "konjac/office/windows"
 
     class << self
       def new(path)

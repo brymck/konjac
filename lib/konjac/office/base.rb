@@ -3,7 +3,7 @@ module Konjac
   module Office
     # This is a basic class that contains all the methods that are universal
     # across OSes, file formats, applications, etc.
-    class Generic
+    class Base
       autoload :Item, "konjac/office/item"
 
       attr_reader :document, :index, :current

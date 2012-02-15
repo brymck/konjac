@@ -4,7 +4,7 @@ require "appscript"
 module Konjac
   module Office
     module Mac
-      class Shared < Generic
+      class Shared < Base
         def initialize(app_name, path = nil)
           @application  = Appscript.app(app_name)
           super path

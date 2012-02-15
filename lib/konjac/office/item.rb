@@ -1,7 +1,7 @@
 # coding: utf-8
 module Konjac
   module Office
-    class Generic
+    class Base
       class Item
         def initialize(opts = {})
           @opts = opts
