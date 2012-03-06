@@ -1,5 +1,5 @@
 require "bundler/gem_tasks"
-require "rdoc/task"
+# require "rdoc/task"  this is weirdly busted for some reason
 require "rspec/core/rake_task"
 require "sdoc"
 

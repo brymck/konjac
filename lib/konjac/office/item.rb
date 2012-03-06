@@ -53,7 +53,11 @@ module Konjac
         end
 
         def clean(text)
-          text.gsub(@opts[:strippable], "").split(@opts[:delimiter])
+          if text == :missing_value
+            [""]
+          else
+            text.gsub(@opts[:strippable], "").split(@opts[:delimiter])
+          end
         end
       end
     end
