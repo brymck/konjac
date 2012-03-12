@@ -1,0 +1,56 @@
+/* Override Blueprint highlighting */
+div.highlight {
+  background-color: #fff;
+}
+
+.container {
+  padding-top: 2em;
+}
+
+/* Highlight links on hover */
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Navigation */
+nav {
+  background-color: #fff;
+  border-bottom: solid 1px #ddd;
+  height: 2em;
+  left: 0;
+  position: fixed;
+  text-align: center;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+nav ul {
+  list-style-type: none;
+}
+
+nav ul li {
+  display: inline-block;
+}
+
+/* Code blocks */
+pre, code, tt {
+  font-family: menlo, monaco, "andale mono", "lucida console", monospace;
+}
+
+pre {
+  background-color: #fafafb;
+  border: 1px solid #cacaca;
+  border-radius: 3px;
+  padding: 10px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+}

@@ -1,0 +1,22 @@
+auto: true
+baseurl: /konjac/
+
+pygments: true
+markdown: rdiscount
+permalink: pretty
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - Rakefile
+  - README.md
+
+nav:
+  - text: Top
+    url: ""
+  - text: Installation
+    url: install/
+  - text: Vim
+    url: vim/
+  - text: Extras
+    url: extras/

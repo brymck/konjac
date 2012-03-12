@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="{{ page.description }}" name='description'>
+  <title>{{ page.title }}</title>
+  <link rel="stylesheet" href="/konjac/css/pygments.css" type="text/css">
+  <link rel="stylesheet" href="/konjac/css/blueprint/screen.css" type="text/css" media="screen, projection">
+  <link rel="stylesheet" href="/konjac/css/blueprint/print.css" type="text/css" media="print"> 
+  <!--[if lt IE 8]>
+    <link rel="stylesheet" href="/konjac/css/blueprint/ie.css" type="text/css" media="screen, projection">
+  <![endif]-->
+  <link rel="stylesheet" href="/konjac/css/master.css" type="text/css"> 
+  <link rel="shortcut icon" href="/konjac/favicon.ico" />
+</head>
+<body>
+  <div class="container">
+    <nav>
+{% capture toc %}
+  {% include toc.md %}
+{% endcapture %}
+{{ toc | unindent | markdownify }}
+    </nav>
+    <article>
+      <h1>{{ page.title }}</h1>
+{{ content }}
+    </article>
+    <footer style="center">
+      <p>© 2011‒{{ site.time | date: "%y" }} <a href="https://github.com/brymck/" target="_blank">Bryan McKelvey</a></p>
+    </footer>
+  </div>
+</body>
+</html>
+
