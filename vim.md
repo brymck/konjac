@@ -30,8 +30,7 @@ trying Vim out, I recommend making a copy of the tutorial file and then opening
 it in MacVim via the following:
 
 {% highlight bash %}
-vim -c "e $VIMRUNTIME/tutor/tutor" -c "w! TUTORCOPY" -c "q"
-mvim TUTORCOPY
+vim -u NONE -c 'e $VIMRUNTIME/tutor/tutor' -c 'w! TUTORCOPY' -c 'q' && mvim TUTORCOPY
 {% endhighlight %}
 
 Some other resources:
