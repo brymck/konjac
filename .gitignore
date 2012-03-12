@@ -6,3 +6,4 @@ Gemfile.lock
 doc/
 pkg/*
 spec/office/bin/sample.*.diff
+_site/
