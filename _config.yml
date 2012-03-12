@@ -16,6 +16,8 @@ nav:
     url: ""
   - text: Installation
     url: install/
+  - text: Commands
+    url: commands/
   - text: Vim
     url: vim/
   - text: Extras
