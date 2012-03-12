@@ -50,6 +50,17 @@ pre {
   -webkit-border-radius: 3px;
 }
 
+/* Keyboard elements */
+kbd {
+  background: #eee;
+  border-color: #ccc #aaa #888 #bbb;
+  border-style: solid;
+  border-width: 1px 3px 3px 1px;
+  color: black;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+
 /* Footer */
 footer {
   text-align: center;
