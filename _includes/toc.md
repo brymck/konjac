@@ -6,3 +6,4 @@
   * [{{ link.text }}](/konjac/{{ link.url }})
   {% endif %}
 {% endfor %}
+  * [Source](https://github.com/brymck/konjac/)

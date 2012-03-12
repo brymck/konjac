@@ -13,8 +13,9 @@ Mac
 konjac has the following requirements:
 
  1. Office for Mac
- 2. Xcode
- 3. Ruby
+ 2. [Git](http://git-scm.com/)
+ 3. Xcode
+ 4. [Ruby](http://www.ruby-lang.org/)
 
 If you've already installed Ruby by compiling from source via RVM, this guide
 is probably unnecessary. Just run `gem install konjac` and you're done.
