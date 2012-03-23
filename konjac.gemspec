@@ -29,8 +29,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "term-ansicolor"
   s.add_runtime_dependency "trollop"
   s.add_development_dependency "autotest"
-  s.add_development_dependency "autotest-fsevent"
-  s.add_development_dependency "autotest-growl"
+  s.add_development_dependency "autotest-growl" if RUBY_PLATFORM =~ /darwin/
   s.add_development_dependency "bundler"
   s.add_development_dependency "rspec"
 end
