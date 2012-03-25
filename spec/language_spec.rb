@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + "/spec_helper"
-
 describe Language do
   it "should find English" do
     Language.find(:english).should == :en

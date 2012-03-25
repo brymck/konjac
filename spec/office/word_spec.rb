@@ -1,6 +1,4 @@
 # coding: utf-8
-require File.dirname(__FILE__) + "/../spec_helper"
-
 describe "Word", :word do
   describe "opening the sample document" do
     before :all do

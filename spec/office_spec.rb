@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + "/spec_helper"
-
 describe Office do
   before :each do
     @env = Office.environment
